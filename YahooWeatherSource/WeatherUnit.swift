@@ -14,28 +14,6 @@ enum WeatherUnit {
 	case Mi
 	case Km
 	
-	static func convert(weather: Weather, from funit: WeatherUnit, to tunit: WeatherUnit) -> Weather {
-		var converted = weather
-		guard
-			let temp = convert(Double(weather.temprature), from: funit, to: tunit),
-			let windTemp = convert(Double(weather.windTemperatue), from: funit, to: tunit)
-		else { return weather }
-		converted.temprature = Int(temp)
-		converted.windTemperatue = Int(windTemp)
-		return converted
-	}
-	
-	static func convert(forecast: Forecast, from funit: WeatherUnit, to tunit: WeatherUnit) -> Forecast {
-		var converted = forecast
-		guard
-			let highTemp = convert(forecast.highTemp, from: funit, to: tunit),
-			let lowTemp = convert(forecast.lowTemp, from: funit, to: tunit)
-		else { return converted }
-		converted.highTemp = highTemp
-		converted.lowTemp = lowTemp
-		return converted
-	}
-	
 	private static func convert(value: Double, from funit: WeatherUnit, to tunit: WeatherUnit) -> Double? {
 		switch (funit, tunit) {
 		case (.Fahrenheit, .Celsius):

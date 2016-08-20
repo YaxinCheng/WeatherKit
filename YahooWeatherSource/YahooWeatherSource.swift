@@ -19,27 +19,35 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 		NSURLCache.setSharedURLCache(cache)
 	}
 	
-	public func currentWeather(at city: City, complete: (Result<Weather>) -> Void) {
-		let woeid = city.woeid
+	public func currentWeather(city city: String, province: String = "", country: String = "", complete: (Result<NSDictionary>) -> Void) {
 		dispatch_async(queue) {
-			self.loadWeatherData(at: woeid, complete: complete)
+			let description = self.generateCityDescription(city: city, province: province, country: country)
+			let cityLoader = CityLoader(input: description)
+			cityLoader.loads {
+				guard let woeid = $0.first?["woeid"] as? String else {
+					let errorResult = Result<NSDictionary>.Failure(YahooWeatherError.FailedFindingCity)
+					complete(errorResult)
+					return
+				}
+				self.loadWeatherData(woeid: woeid, complete: complete)
+			}
 		}
 	}
 	
-	public func currentWeather(at location: CLLocation, complete: (Result<Weather>) -> Void) {
+	public func currentWeather(at location: CLLocation, complete: (Result<NSDictionary>) -> Void) {
 		locationParse(at: location) {
 			guard let city = $0 else {
-				let errorResult = Result<Weather>.Failure(YahooWeatherError.FailedFindingCity)
+				let errorResult = Result<NSDictionary>.Failure(YahooWeatherError.FailedFindingCity)
 				complete(errorResult)
 				return
 			}
 			dispatch_async(self.queue) {
-				self.loadWeatherData(at: city.woeid, complete: complete)
+				self.loadWeatherData(woeid: city["woeid"] as! String, complete: complete)
 			}
 		}
 	}
 	
-	public func locationParse(at location: CLLocation, complete: (City?) -> Void) {
+	public func locationParse(at location: CLLocation, complete: (NSDictionary?) -> Void) {
 		let geoCoder = CLGeocoder()
 		dispatch_async(queue) {
 			geoCoder.reverseGeocodeLocation(location) { (placeMarks, error) in
@@ -71,43 +79,51 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 		}
 	}
 	
-	public func fivedaysForecast(at city: City, complete: (Result<[Forecast]> -> Void)) {
+	public func fivedaysForecast(city city: String, province: String, country: String, complete: (Result<[NSDictionary]>) -> Void) {
 		dispatch_async(queue) {
-			self.loadForecasts(at: city.woeid, complete: complete)
+			let description = self.generateCityDescription(city: city, province: province, country: country)
+			let cityLoader = CityLoader(input: description)
+			cityLoader.loads {
+				guard let woeid = $0.first?["woeid"] as? String else {
+					let errorResult = Result<[NSDictionary]>.Failure(YahooWeatherError.FailedFindingCity)
+					complete(errorResult)
+					return
+				}
+				self.loadForecasts(woeid: woeid, complete: complete)
+			}
 		}
 	}
 	
-	public func fivedaysForecast(at location: CLLocation, complete: (Result<[Forecast]> -> Void)) {
+	public func fivedaysForecast(at location: CLLocation, complete: (Result<[NSDictionary]> -> Void)) {
 		locationParse(at: location) {
 			guard let city = $0 else {
-				let errorResult = Result<[Forecast]>.Failure(YahooWeatherError.FailedFindingCity)
+				let errorResult = Result<[NSDictionary]>.Failure(YahooWeatherError.FailedFindingCity)
 				complete(errorResult)
 				return
 			}
 			dispatch_async(self.queue) {
-				self.loadForecasts(at: city.woeid, complete: complete)
+				self.loadForecasts(woeid: city["woeid"] as! String, complete: complete)
 			}
 		}
 	}
 	
-	private func loadWeatherData(at locationString: String, complete: (Result<Weather>) -> Void) {
+	private func loadWeatherData(woeid woeid: String, complete: (Result<NSDictionary>) -> Void) {
 		let baseSQL:WeatherSourceSQLPatterns = .weather
-		let completeSQL = baseSQL.generateSQL(with: locationString)
+		let completeSQL = baseSQL.generateSQL(with: woeid)
 		
 		dispatch_async(queue) {
 			self.sendRequst(completeSQL) {
 				guard let weatherJSON = $0 as? NSDictionary,
 					let unwrapped = (weatherJSON["query"] as? NSDictionary)?["results"]?["channel"] as? Dictionary<String, AnyObject>
 					else {
-						let error = Result<Weather>.Failure(YahooWeatherError.LoadFailed)
+						let error = Result<NSDictionary>.Failure(YahooWeatherError.LoadFailed)
 						dispatch_async(dispatch_get_main_queue()) {
 							complete(error)
 						}
 						return
 				}
 				let formattedJSON = self.formatWeatherJSON(unwrapped)
-				guard let weather = Weather(with: formattedJSON) else { return }
-				let result = Result<Weather>.Success(WeatherUnit.convert(weather, from: .Fahrenheit, to: .Celsius))
+				let result = Result<NSDictionary>.Success(formattedJSON)
 				dispatch_async(dispatch_get_main_queue()) {
 					complete(result)
 				}
@@ -115,22 +131,22 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 		}
 	}
 	
-	private func loadForecasts(at locationString: String, complete: (Result<[Forecast]>) -> Void) {
+	private func loadForecasts(woeid woeid: String, complete: (Result<[NSDictionary]>) -> Void) {
 		let baseSQL:WeatherSourceSQLPatterns = .forecast
-		let completeSQL = baseSQL.generateSQL(with: locationString)
+		let completeSQL = baseSQL.generateSQL(with: woeid)
 		dispatch_async(queue) {
 			self.sendRequst(completeSQL) {
 				guard let weatherJSON = $0 as? NSDictionary,
 					let unwrapped = (((weatherJSON["query"] as? NSDictionary)?["results"] as? NSDictionary)?["channel"]) as? [Dictionary<String, AnyObject>]
 					else {
-						let error = Result<[Forecast]>.Failure(YahooWeatherError.LoadFailed)
+						let error = Result<[NSDictionary]>.Failure(YahooWeatherError.LoadFailed)
 						dispatch_async(dispatch_get_main_queue()) {
 							complete(error)
 						}
 						return
 				}
-				let forecasts = unwrapped.flatMap { $0["item"]?["forecast"] as? NSDictionary }.flatMap { Forecast(with: $0) }
-				let result = Result<[Forecast]>.Success(forecasts)
+				let forecasts = unwrapped.flatMap { $0["item"]?["forecast"] as? NSDictionary }
+				let result = Result<[NSDictionary]>.Success(forecasts)
 				dispatch_async(dispatch_get_main_queue()) {
 					complete(result)
 				}
@@ -161,6 +177,13 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 		component.hour = elements[0] + (timeComponents[2] == "am" ? 0 : 12)
 		component.minute = elements[1]
 		return component
+	}
+	
+	private func generateCityDescription(city city: String, province: String, country: String) -> String {
+		var description = city
+		description += province.isEmpty ? "" : (", " + province)
+		description += country.isEmpty ? "" : (", " + country)
+		return description
 	}
 }
 

@@ -12,7 +12,6 @@ import CoreLocation
 
 class YahooWeatherSourceTests: XCTestCase {
 	var weatherSource: YahooWeatherSource!
-	var halifaxCity: City!
 	var halifaxLocation: CLLocation!
 	var failBlock: ((NSError?) -> Void)!
 	
@@ -20,15 +19,6 @@ class YahooWeatherSourceTests: XCTestCase {
 		super.setUp()
 		// Put setup code here. This method is called before the invocation of each test method in the class.
 		weatherSource = YahooWeatherSource()
-		var halifaxJSON = Dictionary<String, AnyObject>()
-		halifaxJSON["name"] = "Halifax"
-		halifaxJSON["admin1"] = "Nova Scotia"
-		halifaxJSON["country"] = "Canada"
-		halifaxJSON["woeid"] = "4177"
-		let centroid = Dictionary<String, String>(dictionaryLiteral: ("latitude", "44.642078"), ("longitude", "-63.620571"))
-		halifaxJSON["centroid"] = centroid
-		halifaxJSON["timezone"] = "America/Halifax"
-		halifaxCity = City(from: halifaxJSON)!
 		halifaxLocation = CLLocation(latitude: 44.642078, longitude: -63.620571)
 		failBlock = {
 			guard let error = $0 else { return }
@@ -61,45 +51,50 @@ class YahooWeatherSourceTests: XCTestCase {
 		waitForExpectationsWithTimeout(5, handler: failBlock)
 	}
 	
-	func testWeatherInCity() {
-		let expectation = expectationWithDescription("weatherInCity")
-		weatherSource.currentWeather(at: halifaxCity) { (result) in
-			if case .Success(_) = result {
+	func testParseLocation() {
+		let expectation = expectationWithDescription("locationParse")
+		weatherSource.locationParse(at: halifaxLocation) {
+			assert($0 != nil)
+			assert($0!["name"] is String)
+			assert($0!["name"] as! String == "Halifax")
+			assert($0!["country"] is String)
+			assert($0!["country"] as! String == "Canada")
+			assert($0!["admin1"] is String)
+			assert($0!["admin1"] as! String == "Nova Scotia")
+			expectation.fulfill()
+		}
+		waitForExpectationsWithTimeout(7, handler: failBlock)
+	}
+	
+	func testWeatherByName() {
+		let expectation = expectationWithDescription("weatherByName")
+		weatherSource.currentWeather(city: "Halifax", province: "Nova Scotia", country: "Canada") { result in
+			if case .Success(let json) = result {
+				assert(json["error"] == nil)
 				expectation.fulfill()
 			} else {
 				XCTFail()
 			}
 		}
-		waitForExpectationsWithTimeout(5, handler: failBlock)
-	}
-	
-	func testParseLocation() {
-		let expectation = expectationWithDescription("locationParse")
-		weatherSource.locationParse(at: halifaxLocation) {
-			assert($0 != nil)
-			assert($0!.name == "Halifax")
-			assert($0!.country == "Canada")
-			assert($0!.province == "Nova Scotia")
-			expectation.fulfill()
-		}
-		waitForExpectationsWithTimeout(5, handler: failBlock)
+		waitForExpectationsWithTimeout(10, handler: failBlock)
 	}
 	
 	func testWeatherByLocation() {
 		let expectation = expectationWithDescription("weatherByLocation")
 		weatherSource.currentWeather(at: halifaxLocation) { (result) in
-			if case .Success(_) = result {
+			if case .Success(let json) = result {
+				assert(json["error"] == nil)
 				expectation.fulfill()
 			} else {
 				XCTFail()
 			}
 		}
-		waitForExpectationsWithTimeout(5, handler: failBlock)
+		waitForExpectationsWithTimeout(10, handler: failBlock)
 	}
 	
-	func testForecastInCity() {
-		let expectation = expectationWithDescription("forecastsInCity")
-		weatherSource.fivedaysForecast(at: halifaxCity) { (result) in
+	func testForecastByName() {
+		let expectation = expectationWithDescription("forecastByName")
+		weatherSource.fivedaysForecast(city: "Halifax", province: "Nova Scotia", country: "Canada") { result in
 			if case .Success(let forecasts) = result {
 				assert(forecasts.count == 10)
 				expectation.fulfill()

@@ -16,7 +16,7 @@ public struct CityLoader: WeatherSourceProtocol {
 		sql = baseSQL.generateSQL(with: input)
 	}
 	
-	public func loads(complete: ([City]) -> Void) {
+	public func loads(complete: ([NSDictionary]) -> Void) {
 		sendRequst(sql) {
 			guard let citiesJSON = $0 as? NSDictionary else {
 				complete([])
@@ -31,8 +31,7 @@ public struct CityLoader: WeatherSourceProtocol {
 				complete([])
 				return
 			}
-			let cities = unwrapped.flatMap { City(from: $0) }
-			complete(cities)
+			complete(unwrapped)
 		}
 	}
 }
