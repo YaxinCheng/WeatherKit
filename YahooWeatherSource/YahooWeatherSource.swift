@@ -13,7 +13,7 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 	private let queue: dispatch_queue_t
 	private let cache: NSURLCache
 	
-	init() {
+	public init() {
 		queue = dispatch_queue_create("WeatherSourceQueue", nil)
 		cache = NSURLCache(memoryCapacity: 10 * 1024 * 1024, diskCapacity: 30 * 1024 * 1024, diskPath: "weather.urlcache")
 		NSURLCache.setSharedURLCache(cache)
