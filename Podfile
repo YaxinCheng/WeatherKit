@@ -1,0 +1,1 @@
+pod 'YahooWeatherSource', :path => '~/Developer/Cocoa/YahooWeatherSource'
