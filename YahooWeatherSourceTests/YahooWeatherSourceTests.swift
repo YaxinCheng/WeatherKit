@@ -13,12 +13,22 @@ import CoreLocation
 class YahooWeatherSourceTests: XCTestCase {
 	var weatherSource: YahooWeatherSource!
 	var halifaxLocation: CLLocation!
+	var halifaxJSON: Dictionary<String, AnyObject>!
 	var failBlock: ((NSError?) -> Void)!
 	
 	override func setUp() {
 		super.setUp()
 		// Put setup code here. This method is called before the invocation of each test method in the class.
 		weatherSource = YahooWeatherSource()
+		var halifaxJSON = Dictionary<String, AnyObject>()
+		halifaxJSON["name"] = "Halifax"
+		halifaxJSON["admin1"] = "Nova Scotia"
+		halifaxJSON["country"] = "Canada"
+		halifaxJSON["woeid"] = "4177"
+		let centroid = Dictionary<String, String>(dictionaryLiteral: ("latitude", "44.642078"), ("longitude", "-63.620571"))
+		halifaxJSON["centroid"] = centroid
+		halifaxJSON["timezone"] = "America/Halifax"
+		self.halifaxJSON = halifaxJSON
 		halifaxLocation = CLLocation(latitude: 44.642078, longitude: -63.620571)
 		failBlock = {
 			guard let error = $0 else { return }
@@ -33,8 +43,8 @@ class YahooWeatherSourceTests: XCTestCase {
 	
 	func testWrongCity() {
 		let expectation = expectationWithDescription("loads")
-		let cityLoader = CityLoader(input: "Bkingalksdjflkasjdlfkjsakldjflkjsf")
-		cityLoader.loads { (cities) in
+		let cityLoader = CityLoader()
+		cityLoader.loadCity("Bkingalksdjflkasjdlfkjsakldjflkjsf") { (cities) in
 			assert(cities.isEmpty)
 			expectation.fulfill()
 		}
@@ -43,9 +53,26 @@ class YahooWeatherSourceTests: XCTestCase {
 	
 	func testExistCity() {
 		let expectation = expectationWithDescription("loads")
-		let cityLoader = CityLoader(input: "Halifax")
-		cityLoader.loads { (cities) in
+		let cityLoader = CityLoader()
+		cityLoader.loadCity("Halifax") { (cities) in
 			assert(cities.count > 0)
+			expectation.fulfill()
+		}
+		waitForExpectationsWithTimeout(5, handler: failBlock)
+	}
+	
+	func testDaynight() {
+		let expectation = expectationWithDescription("cityDaytime")
+		let cityLoader = CityLoader()
+		cityLoader.daytime(for: halifaxJSON) {
+			guard
+				let city = $0,
+				let _ = city["sunrise"],
+				let _ = city["sunset"]
+			else {
+				XCTFail()
+				return
+			}
 			expectation.fulfill()
 		}
 		waitForExpectationsWithTimeout(5, handler: failBlock)
@@ -63,7 +90,7 @@ class YahooWeatherSourceTests: XCTestCase {
 			assert($0!["admin1"] as! String == "Nova Scotia")
 			expectation.fulfill()
 		}
-		waitForExpectationsWithTimeout(7, handler: failBlock)
+		waitForExpectationsWithTimeout(10, handler: failBlock)
 	}
 	
 	func testWeatherByName() {
