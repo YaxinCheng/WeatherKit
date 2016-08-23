@@ -22,8 +22,8 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 	public func currentWeather(city city: String, province: String = "", country: String = "", complete: (Result<NSDictionary>) -> Void) {
 		dispatch_async(queue) {
 			let description = self.generateCityDescription(city: city, province: province, country: country)
-			let cityLoader = CityLoader(input: description)
-			cityLoader.loads {
+			let cityLoader = CityLoader()
+			cityLoader.loadCity(description) {
 				guard let woeid = $0.first?["woeid"] as? String else {
 					let errorResult = Result<NSDictionary>.Failure(YahooWeatherError.FailedFindingCity)
 					complete(errorResult)
@@ -68,8 +68,8 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 							return
 					}
 					dispatch_sync(self.queue) {
-						let loader = CityLoader(input: "\(city), \(state), \(country)")
-						loader.loads {
+						let loader = CityLoader()
+						loader.loadCity("\(city), \(state), \(country)") {
 							guard let matchedCity = $0.first else { return }
 							complete(matchedCity)
 						}
@@ -82,8 +82,8 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 	public func fivedaysForecast(city city: String, province: String, country: String, complete: (Result<[NSDictionary]>) -> Void) {
 		dispatch_async(queue) {
 			let description = self.generateCityDescription(city: city, province: province, country: country)
-			let cityLoader = CityLoader(input: description)
-			cityLoader.loads {
+			let cityLoader = CityLoader()
+			cityLoader.loadCity(description) {
 				guard let woeid = $0.first?["woeid"] as? String else {
 					let errorResult = Result<[NSDictionary]>.Failure(YahooWeatherError.FailedFindingCity)
 					complete(errorResult)
@@ -164,19 +164,8 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 		newJSON["humidity"] = json["atmosphere"]?["humidity"]
 		newJSON["visibility"] = json["atmosphere"]?["visibility"]
 		newJSON["pressure"] = json["atmosphere"]?["pressure"]
-		newJSON["sunrise"] = processTime(json["astronomy"]?["sunrise"] as? String)
-		newJSON["sunset"] = processTime(json["astronomy"]?["sunset"] as? String)
 		
 		return newJSON
-	}
-	
-	private func processTime(time: String?) -> NSDateComponents? {
-		guard let timeComponents = time?.characters.split(isSeparator: {$0 == " " || $0 == ":"}).map(String.init) where timeComponents.count >= 2 else { return nil }
-		let elements = timeComponents.flatMap { Int($0) }
-		let component = NSDateComponents()
-		component.hour = elements[0] + (timeComponents[2] == "am" ? 0 : 12)
-		component.minute = elements[1]
-		return component
 	}
 	
 	private func generateCityDescription(city city: String, province: String, country: String) -> String {

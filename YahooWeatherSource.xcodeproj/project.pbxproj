@@ -19,8 +19,7 @@
 		E3CB87161D66F96800ABC10D /* CityLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CB87151D66F96800ABC10D /* CityLoader.swift */; };
 		E3CB871B1D66F9B000ABC10D /* NSDate+Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CB871A1D66F9B000ABC10D /* NSDate+Localization.swift */; };
 		E3CB871D1D66F9B700ABC10D /* String+formatted.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CB871C1D66F9B700ABC10D /* String+formatted.swift */; };
-		E3CB87231D671BC500ABC10D /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3CB87221D671BC500ABC10D /* CoreLocation.framework */; };
-		E3CB87251D671BCD00ABC10D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3CB87241D671BCD00ABC10D /* Foundation.framework */; };
+		E3CB87951D6C150200ABC10D /* NSDateComponents+InitFromString.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CB87941D6C150200ABC10D /* NSDateComponents+InitFromString.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,8 +48,7 @@
 		E3CB87151D66F96800ABC10D /* CityLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CityLoader.swift; sourceTree = "<group>"; };
 		E3CB871A1D66F9B000ABC10D /* NSDate+Localization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSDate+Localization.swift"; sourceTree = "<group>"; };
 		E3CB871C1D66F9B700ABC10D /* String+formatted.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+formatted.swift"; sourceTree = "<group>"; };
-		E3CB87221D671BC500ABC10D /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
-		E3CB87241D671BCD00ABC10D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		E3CB87941D6C150200ABC10D /* NSDateComponents+InitFromString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSDateComponents+InitFromString.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,8 +56,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E3CB87251D671BCD00ABC10D /* Foundation.framework in Frameworks */,
-				E3CB87231D671BC500ABC10D /* CoreLocation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -77,8 +73,6 @@
 		E3CB86DB1D66D02F00ABC10D = {
 			isa = PBXGroup;
 			children = (
-				E3CB87241D671BCD00ABC10D /* Foundation.framework */,
-				E3CB87221D671BC500ABC10D /* CoreLocation.framework */,
 				E3CB86E71D66D02F00ABC10D /* YahooWeatherSource */,
 				E3CB86F31D66D02F00ABC10D /* YahooWeatherSourceTests */,
 				E3CB86E61D66D02F00ABC10D /* Products */,
@@ -100,6 +94,7 @@
 				E3CB86E81D66D02F00ABC10D /* YahooWeatherSource.h */,
 				E3CB871A1D66F9B000ABC10D /* NSDate+Localization.swift */,
 				E3CB871C1D66F9B700ABC10D /* String+formatted.swift */,
+				E3CB87941D6C150200ABC10D /* NSDateComponents+InitFromString.swift */,
 				E3CB87031D66D08700ABC10D /* WeatherSourceProtocol.swift */,
 				E3CB87041D66D08700ABC10D /* WeatherSourceSQL.swift */,
 				E3CB87051D66D08700ABC10D /* WeatherSourceSQLPatterns.swift */,
@@ -234,6 +229,7 @@
 				E3CB870E1D66D08700ABC10D /* WeatherSourceSQLPatterns.swift in Sources */,
 				E3CB87161D66F96800ABC10D /* CityLoader.swift in Sources */,
 				E3CB870C1D66D08700ABC10D /* WeatherSourceProtocol.swift in Sources */,
+				E3CB87951D6C150200ABC10D /* NSDateComponents+InitFromString.swift in Sources */,
 				E3CB870F1D66D08700ABC10D /* WeatherUnit.swift in Sources */,
 				E3CB87101D66D08700ABC10D /* YahooWeatherSource.swift in Sources */,
 				E3CB870D1D66D08700ABC10D /* WeatherSourceSQL.swift in Sources */,
