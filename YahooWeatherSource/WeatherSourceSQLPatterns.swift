@@ -11,7 +11,8 @@ import Foundation
 enum WeatherSourceSQLPatterns: String {
 	case weather = "select wind, atmosphere, item.condition from weather.forecast where woeid = \"%@\""
 	case forecast = "select item.forecast from weather.forecast where woeid = \"%@\""
-	case city = "select name, country.content,admin1.content,woeid,centroid,timezone.content from geo.places where text=\"%@\""
+	case cityFromName = "select name, country.content,admin1.content,woeid,centroid,timezone.content from geo.places where text=\"%@\""
+	case cityFromWoeid = "select name, country.content,admin1.content,woeid,centroid,timezone.content from geo.places where woeid=\"%@\""
 	case daytime = "select astronomy from weather.forecast where woeid = \"%@\""
 	
 	var sql: WeatherSourceSQL {

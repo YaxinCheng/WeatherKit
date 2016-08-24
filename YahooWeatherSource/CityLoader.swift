@@ -15,10 +15,10 @@ public struct CityLoader: WeatherSourceProtocol {
 		queue = dispatch_queue_create("CityLoaderQueue", nil)
 	}
 	
-	public func loadCity(cityName: String, complete: ([NSDictionary]) -> Void) {
+	public func loadCity(city cityName: String, province: String = "", country: String = "", complete: ([NSDictionary]) -> Void) {
 		dispatch_async(queue) {
-			let baseSQL: WeatherSourceSQLPatterns = .city
-			let sql = baseSQL.generateSQL(with: cityName)
+			let baseSQL: WeatherSourceSQLPatterns = .cityFromName
+			let sql = baseSQL.generateSQL(with: cityName + ", " + province + ", " + country)
 			self.sendRequst(sql) {
 				guard let citiesJSON = $0 as? NSDictionary else {
 					dispatch_async(dispatch_get_main_queue()) {
@@ -39,6 +39,24 @@ public struct CityLoader: WeatherSourceProtocol {
 				}
 				dispatch_async(dispatch_get_main_queue()) {
 					complete(unwrapped)
+				}
+			}
+		}
+	}
+	
+	public func loadCity(woeid woeid: String, complete: (NSDictionary?) -> Void) {
+		dispatch_async(queue) {
+			let baseSQL: WeatherSourceSQLPatterns = .cityFromWoeid
+			let sql = baseSQL.generateSQL(with: woeid)
+			self.sendRequst(sql) {
+				guard let city = $0 as? NSDictionary else {
+					dispatch_async(dispatch_get_main_queue()) {
+						complete(nil)
+					}
+					return
+				}
+				dispatch_async(dispatch_get_main_queue()) {
+					complete(city)
 				}
 			}
 		}
