@@ -21,9 +21,8 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 	
 	public func currentWeather(city city: String, province: String = "", country: String = "", complete: (Result<NSDictionary>) -> Void) {
 		dispatch_async(queue) {
-			let description = self.generateCityDescription(city: city, province: province, country: country)
 			let cityLoader = CityLoader()
-			cityLoader.loadCity(description) {
+			cityLoader.loadCity(city: city, province: province, country: country) {
 				guard let woeid = $0.first?["woeid"] as? String else {
 					let errorResult = Result<NSDictionary>.Failure(YahooWeatherError.FailedFindingCity)
 					complete(errorResult)
@@ -69,7 +68,7 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 					}
 					dispatch_sync(self.queue) {
 						let loader = CityLoader()
-						loader.loadCity("\(city), \(state), \(country)") {
+						loader.loadCity(city: city, province: state, country: country) {
 							guard let matchedCity = $0.first else { return }
 							complete(matchedCity)
 						}
@@ -81,9 +80,8 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 	
 	public func fivedaysForecast(city city: String, province: String, country: String, complete: (Result<[NSDictionary]>) -> Void) {
 		dispatch_async(queue) {
-			let description = self.generateCityDescription(city: city, province: province, country: country)
 			let cityLoader = CityLoader()
-			cityLoader.loadCity(description) {
+			cityLoader.loadCity(city: city, province: province, country: country) {
 				guard let woeid = $0.first?["woeid"] as? String else {
 					let errorResult = Result<[NSDictionary]>.Failure(YahooWeatherError.FailedFindingCity)
 					complete(errorResult)
@@ -166,13 +164,6 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 		newJSON["pressure"] = json["atmosphere"]?["pressure"]
 		
 		return newJSON
-	}
-	
-	private func generateCityDescription(city city: String, province: String, country: String) -> String {
-		var description = city
-		description += province.isEmpty ? "" : (", " + province)
-		description += country.isEmpty ? "" : (", " + country)
-		return description
 	}
 }
 

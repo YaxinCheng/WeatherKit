@@ -44,7 +44,7 @@ class YahooWeatherSourceTests: XCTestCase {
 	func testWrongCity() {
 		let expectation = expectationWithDescription("loads")
 		let cityLoader = CityLoader()
-		cityLoader.loadCity("Bkingalksdjflkasjdlfkjsakldjflkjsf") { (cities) in
+		cityLoader.loadCity(city: "Bkingalksdjflkasjdlfkjsakldjflkjsf") { (cities) in
 			assert(cities.isEmpty)
 			expectation.fulfill()
 		}
@@ -54,8 +54,23 @@ class YahooWeatherSourceTests: XCTestCase {
 	func testExistCity() {
 		let expectation = expectationWithDescription("loads")
 		let cityLoader = CityLoader()
-		cityLoader.loadCity("Halifax") { (cities) in
+		cityLoader.loadCity(city: "Halifax") { (cities) in
 			assert(cities.count > 0)
+			expectation.fulfill()
+		}
+		waitForExpectationsWithTimeout(5, handler: failBlock)
+	}
+	
+	func testCityByWoeid() {
+		let expectation = expectationWithDescription("loadCityWithWoeid")
+		let cityLoader = CityLoader()
+		cityLoader.loadCity(woeid: "4177") {
+			guard let result = $0, let name = result["name"] as? String, let woeid = result["woeid"] as? String else {
+				XCTFail()
+				return
+			}
+			assert(name == "Halifax")
+			assert(woeid == "4177")
 			expectation.fulfill()
 		}
 		waitForExpectationsWithTimeout(5, handler: failBlock)

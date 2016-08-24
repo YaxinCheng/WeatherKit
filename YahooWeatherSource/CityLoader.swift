@@ -49,7 +49,7 @@ public struct CityLoader: WeatherSourceProtocol {
 			let baseSQL: WeatherSourceSQLPatterns = .cityFromWoeid
 			let sql = baseSQL.generateSQL(with: woeid)
 			self.sendRequst(sql) {
-				guard let city = $0 as? NSDictionary else {
+				guard let city = (($0 as? NSDictionary)?["query"]?["results"] as? NSDictionary)?["place"] as? NSDictionary else {
 					dispatch_async(dispatch_get_main_queue()) {
 						complete(nil)
 					}
@@ -64,7 +64,7 @@ public struct CityLoader: WeatherSourceProtocol {
 	
 	
 	public func daytime(for city: NSDictionary, complete: (NSDictionary?) -> Void) {
-		dispatch_sync(queue) {
+		dispatch_async(queue) {
 			guard let woeid = city["woeid"] as? String else { return }
 			self.updateTime(woeid: woeid) {
 				guard $0 != nil && $1 != nil else {
@@ -85,24 +85,22 @@ public struct CityLoader: WeatherSourceProtocol {
 		dispatch_async(queue) {
 			let baseSQL = WeatherSourceSQLPatterns.daytime
 			let sql = baseSQL.generateSQL(with: woeid)
-			dispatch_sync(self.queue) {
-				self.sendRequst(sql) {
-					guard
-						let daytimeJSON = $0 as? NSDictionary,
-						let unwrapped = ((daytimeJSON["query"] as? NSDictionary)?["results"]?["channel"] as? NSDictionary)?["astronomy"] as? NSDictionary,
-						let sunriseString = unwrapped["sunrise"] as? String,
-						let sunrise = NSDateComponents(from: sunriseString),
-						let sunsetString = unwrapped["sunset"] as? String,
-						let sunset = NSDateComponents(from: sunsetString)
-					else {
-						dispatch_async(dispatch_get_main_queue()) {
-							complete(sunrise: nil, sunset: nil)
-						}
-						return
-					}
+			self.sendRequst(sql) {
+				guard
+					let daytimeJSON = $0 as? NSDictionary,
+					let unwrapped = ((daytimeJSON["query"] as? NSDictionary)?["results"]?["channel"] as? NSDictionary)?["astronomy"] as? NSDictionary,
+					let sunriseString = unwrapped["sunrise"] as? String,
+					let sunrise = NSDateComponents(from: sunriseString),
+					let sunsetString = unwrapped["sunset"] as? String,
+					let sunset = NSDateComponents(from: sunsetString)
+				else {
 					dispatch_async(dispatch_get_main_queue()) {
-						complete(sunrise: sunrise, sunset: sunset)
+						complete(sunrise: nil, sunset: nil)
 					}
+					return
+				}
+				dispatch_async(dispatch_get_main_queue()) {
+					complete(sunrise: sunrise, sunset: sunset)
 				}
 			}
 		}
