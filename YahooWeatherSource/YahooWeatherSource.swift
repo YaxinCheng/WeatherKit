@@ -162,6 +162,8 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 		newJSON["humidity"] = json["atmosphere"]?["humidity"]
 		newJSON["visibility"] = json["atmosphere"]?["visibility"]
 		newJSON["pressure"] = json["atmosphere"]?["pressure"]
+		newJSON["sunrise"] = NSDateComponents(from: (json["astronomy"]?["sunrise"] as? String) ?? "")
+		newJSON["sunset"] = NSDateComponents(from: (json["astronomy"]?["sunset"] as? String) ?? "")
 		
 		return newJSON
 	}
