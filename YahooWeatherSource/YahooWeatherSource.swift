@@ -12,7 +12,8 @@ import CoreLocation.CLLocation
 public struct YahooWeatherSource: WeatherSourceProtocol {
 	private let queue: dispatch_queue_t
 	private let cache: NSURLCache
-	var temperatureUnit: WeatherUnit = .Fahrenheit
+	var temperatureUnit: TemperatureUnit = .Fahrenheit
+	var distanceUnit: DistanceUnit = .Mi
 	
 	public init() {
 		queue = dispatch_queue_create("WeatherSourceQueue", nil)
@@ -122,8 +123,9 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 						return
 				}
 				let formattedJSON = self.formatWeatherJSON(unwrapped)
-				let unitConvertedJSON = self.temperatureUnit.convert(formattedJSON)
-				let result = Result<NSDictionary>.Success(unitConvertedJSON)
+				let temperatureUnitConvertedJSON = self.temperatureUnit.convert(formattedJSON)
+				let distanceUnitConvertedJSON = self.distanceUnit.convert(temperatureUnitConvertedJSON)
+				let result = Result<NSDictionary>.Success(distanceUnitConvertedJSON)
 				dispatch_async(dispatch_get_main_queue()) {
 					complete(result)
 				}
@@ -145,7 +147,11 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 						}
 						return
 				}
-				let forecasts = unwrapped.flatMap { $0["item"]?["forecast"] as? Dictionary<String, AnyObject> }.map { self.temperatureUnit.convert($0) }
+				let forecasts = unwrapped
+					.flatMap { $0["item"]?["forecast"] as? Dictionary<String, AnyObject> }
+					.map { self.temperatureUnit.convert($0) }
+					.map { self.distanceUnit.convert($0) }
+				
 				let result = Result<[NSDictionary]>.Success(forecasts)
 				dispatch_async(dispatch_get_main_queue()) {
 					complete(result)

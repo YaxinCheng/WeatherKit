@@ -7,13 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E305F0411D73A9D900F055B4 /* WeatherUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E305F0401D73A9D900F055B4 /* WeatherUnit.swift */; };
+		E305F0431D73AA7100F055B4 /* DistanceUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E305F0421D73AA7100F055B4 /* DistanceUnit.swift */; };
 		E3CB86E91D66D02F00ABC10D /* YahooWeatherSource.h in Headers */ = {isa = PBXBuildFile; fileRef = E3CB86E81D66D02F00ABC10D /* YahooWeatherSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E3CB86F01D66D02F00ABC10D /* YahooWeatherSource.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3CB86E51D66D02F00ABC10D /* YahooWeatherSource.framework */; };
 		E3CB86F51D66D02F00ABC10D /* YahooWeatherSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CB86F41D66D02F00ABC10D /* YahooWeatherSourceTests.swift */; };
 		E3CB870C1D66D08700ABC10D /* WeatherSourceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CB87031D66D08700ABC10D /* WeatherSourceProtocol.swift */; };
 		E3CB870D1D66D08700ABC10D /* WeatherSourceSQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CB87041D66D08700ABC10D /* WeatherSourceSQL.swift */; };
 		E3CB870E1D66D08700ABC10D /* WeatherSourceSQLPatterns.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CB87051D66D08700ABC10D /* WeatherSourceSQLPatterns.swift */; };
-		E3CB870F1D66D08700ABC10D /* WeatherUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CB87061D66D08700ABC10D /* WeatherUnit.swift */; };
+		E3CB870F1D66D08700ABC10D /* TemperatureUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CB87061D66D08700ABC10D /* TemperatureUnit.swift */; };
 		E3CB87101D66D08700ABC10D /* YahooWeatherSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CB87071D66D08700ABC10D /* YahooWeatherSource.swift */; };
 		E3CB87141D66F94C00ABC10D /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CB87131D66F94C00ABC10D /* Result.swift */; };
 		E3CB87161D66F96800ABC10D /* CityLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CB87151D66F96800ABC10D /* CityLoader.swift */; };
@@ -33,6 +35,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E305F0401D73A9D900F055B4 /* WeatherUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherUnit.swift; sourceTree = "<group>"; };
+		E305F0421D73AA7100F055B4 /* DistanceUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DistanceUnit.swift; sourceTree = "<group>"; };
 		E3CB86E51D66D02F00ABC10D /* YahooWeatherSource.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = YahooWeatherSource.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3CB86E81D66D02F00ABC10D /* YahooWeatherSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YahooWeatherSource.h; sourceTree = "<group>"; };
 		E3CB86EA1D66D02F00ABC10D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -42,7 +46,7 @@
 		E3CB87031D66D08700ABC10D /* WeatherSourceProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherSourceProtocol.swift; sourceTree = "<group>"; };
 		E3CB87041D66D08700ABC10D /* WeatherSourceSQL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherSourceSQL.swift; sourceTree = "<group>"; };
 		E3CB87051D66D08700ABC10D /* WeatherSourceSQLPatterns.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherSourceSQLPatterns.swift; sourceTree = "<group>"; };
-		E3CB87061D66D08700ABC10D /* WeatherUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherUnit.swift; sourceTree = "<group>"; };
+		E3CB87061D66D08700ABC10D /* TemperatureUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TemperatureUnit.swift; sourceTree = "<group>"; };
 		E3CB87071D66D08700ABC10D /* YahooWeatherSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YahooWeatherSource.swift; sourceTree = "<group>"; };
 		E3CB87131D66F94C00ABC10D /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 		E3CB87151D66F96800ABC10D /* CityLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CityLoader.swift; sourceTree = "<group>"; };
@@ -98,7 +102,9 @@
 				E3CB87031D66D08700ABC10D /* WeatherSourceProtocol.swift */,
 				E3CB87041D66D08700ABC10D /* WeatherSourceSQL.swift */,
 				E3CB87051D66D08700ABC10D /* WeatherSourceSQLPatterns.swift */,
-				E3CB87061D66D08700ABC10D /* WeatherUnit.swift */,
+				E3CB87061D66D08700ABC10D /* TemperatureUnit.swift */,
+				E305F0421D73AA7100F055B4 /* DistanceUnit.swift */,
+				E305F0401D73A9D900F055B4 /* WeatherUnit.swift */,
 				E3CB87071D66D08700ABC10D /* YahooWeatherSource.swift */,
 				E3CB87151D66F96800ABC10D /* CityLoader.swift */,
 				E3CB87131D66F94C00ABC10D /* Result.swift */,
@@ -226,11 +232,13 @@
 			files = (
 				E3CB871B1D66F9B000ABC10D /* NSDate+Localization.swift in Sources */,
 				E3CB871D1D66F9B700ABC10D /* String+formatted.swift in Sources */,
+				E305F0411D73A9D900F055B4 /* WeatherUnit.swift in Sources */,
 				E3CB870E1D66D08700ABC10D /* WeatherSourceSQLPatterns.swift in Sources */,
 				E3CB87161D66F96800ABC10D /* CityLoader.swift in Sources */,
 				E3CB870C1D66D08700ABC10D /* WeatherSourceProtocol.swift in Sources */,
 				E3CB87951D6C150200ABC10D /* NSDateComponents+InitFromString.swift in Sources */,
-				E3CB870F1D66D08700ABC10D /* WeatherUnit.swift in Sources */,
+				E3CB870F1D66D08700ABC10D /* TemperatureUnit.swift in Sources */,
+				E305F0431D73AA7100F055B4 /* DistanceUnit.swift in Sources */,
 				E3CB87101D66D08700ABC10D /* YahooWeatherSource.swift in Sources */,
 				E3CB870D1D66D08700ABC10D /* WeatherSourceSQL.swift in Sources */,
 				E3CB87141D66F94C00ABC10D /* Result.swift in Sources */,

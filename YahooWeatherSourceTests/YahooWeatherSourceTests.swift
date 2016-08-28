@@ -19,6 +19,7 @@ class YahooWeatherSourceTests: XCTestCase {
 	var mockWeatherCelJSON: Dictionary<String, Double>!
 	var mockForecastFahJSON: Dictionary<String, Double>!
 	var mockForecastCelJSON: Dictionary<String, Double>!
+	var mockWeatherMiJSON: Dictionary<String, Double>!
 	
 	override func setUp() {
 		super.setUp()
@@ -36,6 +37,7 @@ class YahooWeatherSourceTests: XCTestCase {
 		halifaxLocation = CLLocation(latitude: 44.642078, longitude: -63.620571)
 		mockWeatherFahJSON = ["temperature": 73.0, "windChill": 77.0]
 		mockForecastFahJSON = ["high": 77.0, "low": 73.0]
+		mockWeatherMiJSON = ["visibility": 16.1]
 		failBlock = {
 			guard let error = $0 else { return }
 			print(error.localizedDescription)
@@ -166,7 +168,7 @@ class YahooWeatherSourceTests: XCTestCase {
 		waitForExpectationsWithTimeout(7, handler: failBlock)
 	}
 	
-	func testUnitConvertion() {
+	func testTemperatureUnitConvertion() {
 		let sameWeatherJSON = weatherSource.temperatureUnit.convert(mockWeatherFahJSON)
 		for (key, value) in sameWeatherJSON {
 			assert(value is Double)
@@ -194,6 +196,16 @@ class YahooWeatherSourceTests: XCTestCase {
 		}
 		assert(abs(low - 22.7777777777777777778) <= 0.00001)
 		assert(abs(high - 25) <= 0.00001)
+	}
+	
+	func testDistanceUnitConvertion() {
+		let sameJSON = weatherSource.distanceUnit.convert(mockWeatherMiJSON)
+		assert(sameJSON["visibility"] is Double)
+		assert((sameJSON["visibility"] as! Double) == mockWeatherMiJSON["visibility"])
+		weatherSource.distanceUnit = .Km
+		let kmJSON = weatherSource.distanceUnit.convert(mockWeatherMiJSON)
+		guard let visibilityInKM = kmJSON["visibility"] as? Double else { XCTFail(); return }
+		assert(visibilityInKM - 0.0161 <= 0.0001)
 	}
 	
 	func testPerformanceExample() {
