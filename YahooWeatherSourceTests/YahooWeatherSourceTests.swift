@@ -15,6 +15,10 @@ class YahooWeatherSourceTests: XCTestCase {
 	var halifaxLocation: CLLocation!
 	var halifaxJSON: Dictionary<String, AnyObject>!
 	var failBlock: ((NSError?) -> Void)!
+	var mockWeatherFahJSON: Dictionary<String, Double>!
+	var mockWeatherCelJSON: Dictionary<String, Double>!
+	var mockForecastFahJSON: Dictionary<String, Double>!
+	var mockForecastCelJSON: Dictionary<String, Double>!
 	
 	override func setUp() {
 		super.setUp()
@@ -25,11 +29,13 @@ class YahooWeatherSourceTests: XCTestCase {
 		halifaxJSON["admin1"] = "Nova Scotia"
 		halifaxJSON["country"] = "Canada"
 		halifaxJSON["woeid"] = "4177"
-		let centroid = Dictionary<String, String>(dictionaryLiteral: ("latitude", "44.642078"), ("longitude", "-63.620571"))
+		let centroid = ["latitude": "44.642078", "longitude": "-63.620571"]
 		halifaxJSON["centroid"] = centroid
 		halifaxJSON["timezone"] = "America/Halifax"
 		self.halifaxJSON = halifaxJSON
 		halifaxLocation = CLLocation(latitude: 44.642078, longitude: -63.620571)
+		mockWeatherFahJSON = ["temperature": 73.0, "windChill": 77.0]
+		mockForecastFahJSON = ["high": 77.0, "low": 73.0]
 		failBlock = {
 			guard let error = $0 else { return }
 			print(error.localizedDescription)
@@ -158,6 +164,36 @@ class YahooWeatherSourceTests: XCTestCase {
 			}
 		}
 		waitForExpectationsWithTimeout(7, handler: failBlock)
+	}
+	
+	func testUnitConvertion() {
+		let sameWeatherJSON = weatherSource.temperatureUnit.convert(mockWeatherFahJSON)
+		for (key, value) in sameWeatherJSON {
+			assert(value is Double)
+			assert((value as! Double) == mockWeatherFahJSON[key])
+		}
+		let sameForecastsJSON = weatherSource.temperatureUnit.convert(mockForecastFahJSON)
+		for (key, value) in sameForecastsJSON {
+			assert(value is Double)
+			assert((value as! Double) == mockForecastFahJSON[key])
+		}
+		weatherSource.temperatureUnit = .Celsius
+		let weatherCelJSON = weatherSource.temperatureUnit.convert(mockWeatherFahJSON)
+		guard let temperature = weatherCelJSON["temperature"] as? Double,
+			let windChill = weatherCelJSON["windChill"] as? Double else {
+				XCTFail()
+				return
+		}
+		assert(abs(temperature - 22.7777777777778) <= 0.00001)
+		assert(abs(windChill - 25) <= 0.0001)
+		let forecastsCelJSON = weatherSource.temperatureUnit.convert(mockForecastFahJSON)
+		guard let low = forecastsCelJSON["low"] as? Double,
+			let high = forecastsCelJSON["high"] as? Double else {
+				XCTFail()
+				return
+		}
+		assert(abs(low - 22.7777777777777777778) <= 0.00001)
+		assert(abs(high - 25) <= 0.00001)
 	}
 	
 	func testPerformanceExample() {
