@@ -13,11 +13,11 @@ enum DistanceUnit: WeatherUnit {
 	case km
 	
 	func convert(JSON: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
-		if case .mi = self { return JSON }
-		guard let visibility = JSON["visibility"] as? Double else { return JSON }
+		let distanceKey = "visibility"
+		guard self == .km, let visibility = JSON[distanceKey] as? Double else { return JSON }
 		var convertedJSON = JSON
 		let convertedVisibility = convert(value: visibility, from: .mi, to: .km)
-		convertedJSON["visibility"] = convertedVisibility
+		convertedJSON[distanceKey] = convertedVisibility
 		return convertedJSON
 	}
 	

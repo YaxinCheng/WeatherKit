@@ -168,7 +168,7 @@ class YahooWeatherSourceTests: XCTestCase {
 		waitForExpectationsWithTimeout(7, handler: failBlock)
 	}
 	
-	func testTemperatureUnitConvertion() {
+	func testTemperatureUnitConversion() {
 		weatherSource.temperatureUnit = .fahrenheit
 		let sameWeatherJSON = weatherSource.temperatureUnit.convert(mockWeatherFahJSON)
 		for (key, value) in sameWeatherJSON {
@@ -199,7 +199,7 @@ class YahooWeatherSourceTests: XCTestCase {
 		assert(abs(high - 25) <= 0.00001)
 	}
 	
-	func testDistanceUnitConvertion() {
+	func testDistanceUnitConversion() {
 		let sameJSON = weatherSource.distanceUnit.convert(mockWeatherMiJSON)
 		assert(sameJSON["visibility"] is Double)
 		assert((sameJSON["visibility"] as! Double) == mockWeatherMiJSON["visibility"])
@@ -209,7 +209,7 @@ class YahooWeatherSourceTests: XCTestCase {
 		assert(visibilityInKM - 0.0161 <= 0.0001)
 	}
 	
-	func testDirectionUnitConvertion() {
+	func testDirectionUnitConversion() {
 		weatherSource.directionUnit = .degree
 		let mockDirectionJSON = ["windDirection": "371"]
 		let sameJSON = weatherSource.directionUnit.convert(mockDirectionJSON)
@@ -221,11 +221,23 @@ class YahooWeatherSourceTests: XCTestCase {
 		assert(directionJSON["windDirection"] as? String != "DEGREE ERROR")
 	}
 	
-	func testPerformanceExample() {
-		// This is an example of a performance test case.
-		self.measureBlock {
-			// Put the code you want to measure the time of here.
-		}
+	func testSpeedUnitConversion() {
+		let originalSpeed: Double = 1234
+		let mockSpeedJSON = ["windSpeed": originalSpeed]
+		let sameJSON = weatherSource.speedUnit.convert(mockSpeedJSON)
+		assert(sameJSON["windSpeed"] is Double)
+		assert(sameJSON["windSpeed"] as? Double == mockSpeedJSON["windSpeed"])
+		weatherSource.speedUnit = .kmph
+		let speedJSON = weatherSource.speedUnit.convert(mockSpeedJSON)
+		assert(speedJSON["windSpeed"] is Double)
+		assert((speedJSON["windSpeed"] as! Double) - (originalSpeed / 1000) <= 0.00001)
 	}
+	
+//	func testPerformanceExample() {
+//		// This is an example of a performance test case.
+//		self.measureBlock {
+//			// Put the code you want to measure the time of here.
+//		}
+//	}
 	
 }

@@ -13,7 +13,8 @@ enum DirectionUnit: WeatherUnit {
 	case direction
 	
 	func convert(JSON: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
-		guard self == .direction, let windDirection = (JSON["windDirection"] as? NSString)?.doubleValue else { return JSON }
+		let directionKey = "windDirection"
+		guard self == .direction, let windDirection = (JSON[directionKey] as? NSString)?.doubleValue else { return JSON }
 		
 		let windDegree: Double
 		if windDirection < 0 {
@@ -26,7 +27,7 @@ enum DirectionUnit: WeatherUnit {
 		
 		let degree = convert(degree: windDegree)
 		var convertedJSON = JSON
-		convertedJSON["windDirection"] = degree
+		convertedJSON[directionKey] = degree
 		return convertedJSON
 	}
 	

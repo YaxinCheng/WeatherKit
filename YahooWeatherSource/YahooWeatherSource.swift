@@ -15,6 +15,7 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 	var temperatureUnit: TemperatureUnit = .celsius
 	var distanceUnit: DistanceUnit = .mi
 	var directionUnit: DirectionUnit = .direction
+	var speedUnit: SpeedUnit = .mph
 	
 	public init() {
 		queue = dispatch_queue_create("WeatherSourceQueue", nil)
@@ -126,7 +127,9 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 				let formattedJSON = self.formatWeatherJSON(unwrapped)
 				let temperatureUnitConvertedJSON = self.temperatureUnit.convert(formattedJSON)
 				let distanceUnitConvertedJSON = self.distanceUnit.convert(temperatureUnitConvertedJSON)
-				let result = Result<NSDictionary>.Success(distanceUnitConvertedJSON)
+				let directionUnitConvertedJSON = self.directionUnit.convert(distanceUnitConvertedJSON)
+				let speedUnitConvertedJSON = self.speedUnit.convert(directionUnitConvertedJSON)
+				let result = Result<NSDictionary>.Success(speedUnitConvertedJSON)
 				dispatch_async(dispatch_get_main_queue()) {
 					complete(result)
 				}
@@ -166,7 +169,7 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 		newJSON["temperature"] = ((json["item"]?["condition"] as? NSDictionary)?["temp"] as? NSString)?.doubleValue
 		newJSON["condition"] = (json["item"]?["condition"] as? NSDictionary)?["text"]
 		newJSON["windChill"] = (json["wind"]?["chill"] as? NSString)?.doubleValue
-		newJSON["windSpeed"] = json["wind"]?["speed"]
+		newJSON["windSpeed"] = (json["wind"]?["speed"] as? NSString)?.doubleValue
 		newJSON["windDirection"] = json["wind"]?["direction"]
 		newJSON["humidity"] = json["atmosphere"]?["humidity"]
 		newJSON["visibility"] = json["atmosphere"]?["visibility"]
