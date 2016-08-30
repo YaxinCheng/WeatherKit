@@ -12,8 +12,9 @@ import CoreLocation.CLLocation
 public struct YahooWeatherSource: WeatherSourceProtocol {
 	private let queue: dispatch_queue_t
 	private let cache: NSURLCache
-	var temperatureUnit: TemperatureUnit = .Fahrenheit
-	var distanceUnit: DistanceUnit = .Mi
+	var temperatureUnit: TemperatureUnit = .celsius
+	var distanceUnit: DistanceUnit = .mi
+	var directionUnit: DirectionUnit = .direction
 	
 	public init() {
 		queue = dispatch_queue_create("WeatherSourceQueue", nil)

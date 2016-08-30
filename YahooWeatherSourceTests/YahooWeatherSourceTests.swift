@@ -169,6 +169,7 @@ class YahooWeatherSourceTests: XCTestCase {
 	}
 	
 	func testTemperatureUnitConvertion() {
+		weatherSource.temperatureUnit = .fahrenheit
 		let sameWeatherJSON = weatherSource.temperatureUnit.convert(mockWeatherFahJSON)
 		for (key, value) in sameWeatherJSON {
 			assert(value is Double)
@@ -179,7 +180,7 @@ class YahooWeatherSourceTests: XCTestCase {
 			assert(value is Double)
 			assert((value as! Double) == mockForecastFahJSON[key])
 		}
-		weatherSource.temperatureUnit = .Celsius
+		weatherSource.temperatureUnit = .celsius
 		let weatherCelJSON = weatherSource.temperatureUnit.convert(mockWeatherFahJSON)
 		guard let temperature = weatherCelJSON["temperature"] as? Double,
 			let windChill = weatherCelJSON["windChill"] as? Double else {
@@ -202,10 +203,22 @@ class YahooWeatherSourceTests: XCTestCase {
 		let sameJSON = weatherSource.distanceUnit.convert(mockWeatherMiJSON)
 		assert(sameJSON["visibility"] is Double)
 		assert((sameJSON["visibility"] as! Double) == mockWeatherMiJSON["visibility"])
-		weatherSource.distanceUnit = .Km
+		weatherSource.distanceUnit = .km
 		let kmJSON = weatherSource.distanceUnit.convert(mockWeatherMiJSON)
 		guard let visibilityInKM = kmJSON["visibility"] as? Double else { XCTFail(); return }
 		assert(visibilityInKM - 0.0161 <= 0.0001)
+	}
+	
+	func testDirectionUnitConvertion() {
+		weatherSource.directionUnit = .degree
+		let mockDirectionJSON = ["windDirection": "371"]
+		let sameJSON = weatherSource.directionUnit.convert(mockDirectionJSON)
+		assert(sameJSON["windDirection"] is String)
+		assert(mockDirectionJSON["windDirection"] == sameJSON["windDirection"] as? String)
+		weatherSource.directionUnit = .direction
+		let directionJSON = weatherSource.directionUnit.convert(mockDirectionJSON)
+		assert(directionJSON["windDirection"] is String)
+		assert(directionJSON["windDirection"] as? String != "DEGREE ERROR")
 	}
 	
 	func testPerformanceExample() {

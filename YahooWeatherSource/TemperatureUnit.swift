@@ -9,18 +9,18 @@
 import Foundation
 
 enum TemperatureUnit: WeatherUnit {
-	case Fahrenheit
-	case Celsius
+	case fahrenheit
+	case celsius
 	
 	func convert(JSON: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject>	{
-		if case .Fahrenheit = self {
+		if case .fahrenheit = self {
 			return JSON
 		}
 		var internalJSON = JSON
 		let weatherMode = JSON["temperature"] is Double
 		let tempKeys = weatherMode ? ["temperature", "windChill"] : ["high", "low"]
 		for eachKey in tempKeys {
-			internalJSON[eachKey] = convert((JSON[eachKey] as? Double) ?? -1, from: .Fahrenheit, to: self)
+			internalJSON[eachKey] = convert((JSON[eachKey] as? Double) ?? -1, from: .fahrenheit, to: self)
 		}
 		
 		return internalJSON
@@ -28,9 +28,9 @@ enum TemperatureUnit: WeatherUnit {
 	
 	private func convert(value: Double, from funit: TemperatureUnit, to tunit: TemperatureUnit) -> Double {
 		switch (funit, tunit) {
-		case (.Fahrenheit, .Celsius):
+		case (.fahrenheit, .celsius):
 			return (value - 32) / 1.8
-		case (.Celsius, .Fahrenheit):
+		case (.celsius, .fahrenheit):
 			return value * 1.8 + 32
 		default:
 			return value
