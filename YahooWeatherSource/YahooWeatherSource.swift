@@ -32,7 +32,7 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 			let cityLoader = CityLoader()
 			cityLoader.loadCity(city: city, province: province, country: country) {
 				guard let woeid = $0.first?["woeid"] as? String else {
-					let errorResult = Result<NSDictionary>.Failure(YahooWeatherError.FailedFindingCity)
+					let errorResult = Result<NSDictionary>(error: YahooWeatherError.FailedFindingCity)
 					complete(errorResult)
 					return
 				}
@@ -44,7 +44,7 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 	public func currentWeather(at location: CLLocation, complete: (Result<NSDictionary>) -> Void) {
 		locationParse(at: location) {
 			guard let city = $0 else {
-				let errorResult = Result<NSDictionary>.Failure(YahooWeatherError.FailedFindingCity)
+				let errorResult = Result<NSDictionary>(error: YahooWeatherError.FailedFindingCity)
 				complete(errorResult)
 				return
 			}
@@ -91,7 +91,7 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 			let cityLoader = CityLoader()
 			cityLoader.loadCity(city: city, province: province, country: country) {
 				guard let woeid = $0.first?["woeid"] as? String else {
-					let errorResult = Result<[NSDictionary]>.Failure(YahooWeatherError.FailedFindingCity)
+					let errorResult = Result<[NSDictionary]>(error: YahooWeatherError.FailedFindingCity)
 					complete(errorResult)
 					return
 				}
@@ -103,7 +103,7 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 	public func fivedaysForecast(at location: CLLocation, complete: (Result<[NSDictionary]> -> Void)) {
 		locationParse(at: location) {
 			guard let city = $0 else {
-				let errorResult = Result<[NSDictionary]>.Failure(YahooWeatherError.FailedFindingCity)
+				let errorResult = Result<[NSDictionary]>(error: YahooWeatherError.FailedFindingCity)
 				complete(errorResult)
 				return
 			}
@@ -122,7 +122,7 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 				guard let weatherJSON = $0 as? NSDictionary,
 					let unwrapped = (weatherJSON["query"] as? NSDictionary)?["results"]?["channel"] as? Dictionary<String, AnyObject>
 					else {
-						let error = Result<NSDictionary>.Failure(YahooWeatherError.LoadFailed)
+						let error = Result<NSDictionary>(error: YahooWeatherError.LoadFailed)
 						dispatch_async(dispatch_get_main_queue()) {
 							complete(error)
 						}
@@ -133,7 +133,7 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 				let distanceUnitConvertedJSON = self.distanceUnit.convert(temperatureUnitConvertedJSON)
 				let directionUnitConvertedJSON = self.directionUnit.convert(distanceUnitConvertedJSON)
 				let speedUnitConvertedJSON = self.speedUnit.convert(directionUnitConvertedJSON)
-				let result = Result<NSDictionary>.Success(speedUnitConvertedJSON)
+				let result = Result<NSDictionary>(value: speedUnitConvertedJSON)
 				dispatch_async(dispatch_get_main_queue()) {
 					complete(result)
 				}
@@ -149,7 +149,7 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 				guard let weatherJSON = $0 as? NSDictionary,
 					let unwrapped = (((weatherJSON["query"] as? NSDictionary)?["results"] as? NSDictionary)?["channel"]) as? [Dictionary<String, AnyObject>]
 					else {
-						let error = Result<[NSDictionary]>.Failure(YahooWeatherError.LoadFailed)
+						let error = Result<[NSDictionary]>(error: YahooWeatherError.LoadFailed)
 						dispatch_async(dispatch_get_main_queue()) {
 							complete(error)
 						}
@@ -160,7 +160,7 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 					.map { self.temperatureUnit.convert($0) }
 					.map { self.distanceUnit.convert($0) }
 				
-				let result = Result<[NSDictionary]>.Success(forecasts)
+				let result = Result<[NSDictionary]>(value: forecasts)
 				dispatch_async(dispatch_get_main_queue()) {
 					complete(result)
 				}
