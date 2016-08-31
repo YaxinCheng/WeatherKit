@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum TemperatureUnit: WeatherUnit {
+public enum TemperatureUnit: WeatherUnit {
 	case fahrenheit
 	case celsius
 	

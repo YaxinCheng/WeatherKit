@@ -29,7 +29,7 @@ extension WeatherSourceProtocol {
 		}
 		let urlRequest = NSMutableURLRequest(URL: url, cachePolicy: .UseProtocolCachePolicy, timeoutInterval: 10 * 60)
 		urlRequest.HTTPMethod = "GET"
-		NSURLSession.sharedSession().dataTaskWithRequest(urlRequest) { (data, response, error) in
+		let task = NSURLSession.sharedSession().dataTaskWithRequest(urlRequest) { (data, response, error) in
 			if error != nil {
 				completion(error!)
 			} else {
@@ -44,6 +44,7 @@ extension WeatherSourceProtocol {
 					completion(error)
 				}
 			}
-		}.resume()
+		}
+		task.resume()
 	}
 }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum SpeedUnit: WeatherUnit {
+public enum SpeedUnit: WeatherUnit {
 	case mph
 	case kmph
 	

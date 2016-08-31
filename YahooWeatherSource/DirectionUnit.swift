@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum DirectionUnit: WeatherUnit {
+public enum DirectionUnit: WeatherUnit {
 	case degree
 	case direction
 	

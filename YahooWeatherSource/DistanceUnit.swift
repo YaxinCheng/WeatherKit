@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum DistanceUnit: WeatherUnit {
+public enum DistanceUnit: WeatherUnit {
 	case mi
 	case km
 	

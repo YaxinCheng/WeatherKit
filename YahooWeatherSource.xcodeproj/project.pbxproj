@@ -78,6 +78,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E30A85641D7681830073EC44 /* Unit Conversion */ = {
+			isa = PBXGroup;
+			children = (
+				E305F0401D73A9D900F055B4 /* WeatherUnit.swift */,
+				E3CB87061D66D08700ABC10D /* TemperatureUnit.swift */,
+				E305F0421D73AA7100F055B4 /* DistanceUnit.swift */,
+				E30A85601D7508500073EC44 /* DirectionUnit.swift */,
+				E30A85621D754E190073EC44 /* SpeedUnit.swift */,
+			);
+			name = "Unit Conversion";
+			sourceTree = "<group>";
+		};
 		E3CB86DB1D66D02F00ABC10D = {
 			isa = PBXGroup;
 			children = (
@@ -104,16 +116,12 @@
 				E3CB871C1D66F9B700ABC10D /* String+formatted.swift */,
 				E3CB87941D6C150200ABC10D /* NSDateComponents+InitFromString.swift */,
 				E3CB87031D66D08700ABC10D /* WeatherSourceProtocol.swift */,
+				E3CB87071D66D08700ABC10D /* YahooWeatherSource.swift */,
 				E3CB87041D66D08700ABC10D /* WeatherSourceSQL.swift */,
 				E3CB87051D66D08700ABC10D /* WeatherSourceSQLPatterns.swift */,
-				E305F0401D73A9D900F055B4 /* WeatherUnit.swift */,
-				E3CB87061D66D08700ABC10D /* TemperatureUnit.swift */,
-				E305F0421D73AA7100F055B4 /* DistanceUnit.swift */,
-				E30A85601D7508500073EC44 /* DirectionUnit.swift */,
-				E30A85621D754E190073EC44 /* SpeedUnit.swift */,
-				E3CB87071D66D08700ABC10D /* YahooWeatherSource.swift */,
 				E3CB87151D66F96800ABC10D /* CityLoader.swift */,
 				E3CB87131D66F94C00ABC10D /* Result.swift */,
+				E30A85641D7681830073EC44 /* Unit Conversion */,
 				E3CB86EA1D66D02F00ABC10D /* Info.plist */,
 			);
 			path = YahooWeatherSource;

@@ -12,12 +12,16 @@ import CoreLocation.CLLocation
 public struct YahooWeatherSource: WeatherSourceProtocol {
 	private let queue: dispatch_queue_t
 	private let cache: NSURLCache
-	var temperatureUnit: TemperatureUnit = .celsius
-	var distanceUnit: DistanceUnit = .mi
-	var directionUnit: DirectionUnit = .direction
-	var speedUnit: SpeedUnit = .mph
+	var temperatureUnit: TemperatureUnit
+	var distanceUnit: DistanceUnit
+	var directionUnit: DirectionUnit
+	var speedUnit: SpeedUnit
 	
-	public init() {
+	public init(temperatureUnit tunit: TemperatureUnit = .celsius, distanceUnit: DistanceUnit = .mi, directionUnit: DirectionUnit = .direction, speedUnit: SpeedUnit = .mph) {
+		temperatureUnit = tunit
+		self.distanceUnit = distanceUnit
+		self.directionUnit = directionUnit
+		self.speedUnit = speedUnit
 		queue = dispatch_queue_create("WeatherSourceQueue", nil)
 		cache = NSURLCache(memoryCapacity: 10 * 1024 * 1024, diskCapacity: 30 * 1024 * 1024, diskPath: "weather.urlcache")
 		NSURLCache.setSharedURLCache(cache)
@@ -174,10 +178,15 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 		newJSON["humidity"] = json["atmosphere"]?["humidity"]
 		newJSON["visibility"] = json["atmosphere"]?["visibility"]
 		newJSON["pressure"] = json["atmosphere"]?["pressure"]
+		newJSON["trend"] = (json["atmosphere"]?["rising"] as? Int) == 0 ? "Falling" : "Rising"
 		newJSON["sunrise"] = NSDateComponents(from: (json["astronomy"]?["sunrise"] as? String) ?? "")
 		newJSON["sunset"] = NSDateComponents(from: (json["astronomy"]?["sunset"] as? String) ?? "")
 		
 		return newJSON
+	}
+	
+	public func clearCache() {
+		cache.removeAllCachedResponses()
 	}
 }
 
