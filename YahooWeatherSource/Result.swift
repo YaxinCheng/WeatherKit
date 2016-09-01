@@ -8,15 +8,15 @@
 
 import Foundation
 
-public enum Result<T> {
-	case Success(T)
+public enum Result<ElementType> {
+	case Success(ElementType)
 	case Failure(ErrorType)
 	
 	init(error: ErrorType) {
 		self = Result.Failure(error)
 	}
 	
-	init(value: T) {
+	init(value: ElementType) {
 		self = Result.Success(value)
 	}
 }

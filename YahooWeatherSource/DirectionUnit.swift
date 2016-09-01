@@ -13,6 +13,10 @@ public enum DirectionUnit: WeatherUnitProtocol {
 	case direction
 	typealias valueType = Dictionary<String, AnyObject>
 	
+	/**
+	Convert distance unit in weather json or forecast json
+	- Parameter value: json needs to be converted
+	*/
 	func convert(value: valueType) -> valueType {
 		let directionKey = "windDirection"
 		guard self == .direction, let windDirection = (value[directionKey] as? NSString)?.doubleValue else { return value }
@@ -32,6 +36,10 @@ public enum DirectionUnit: WeatherUnitProtocol {
 		return convertedJSON
 	}
 	
+	/**
+	Convert a value from one distance unit to another direction unit
+	- Parameter windDegree: The wind degree needs to be converted
+	*/
 	private func convert(degree windDegree: Double) -> String {
 		let deviation = 11.25
 		switch windDegree {

@@ -13,6 +13,10 @@ public enum TemperatureUnit: WeatherUnitProtocol {
 	case celsius
 	typealias valueType = Dictionary<String, AnyObject>
 	
+	/**
+	Convert temperature unit in weather json or forecast json
+	- Parameter value: json needs to be converted
+	*/
 	func convert(value: valueType) -> valueType	{
 		if case .fahrenheit = self {
 			return value
@@ -23,10 +27,15 @@ public enum TemperatureUnit: WeatherUnitProtocol {
 		for eachKey in tempKeys {
 			internalJSON[eachKey] = convert((value[eachKey] as? Double) ?? -1, from: .fahrenheit, to: self)
 		}
-		
 		return internalJSON
 	}
 	
+	/**
+	Convert a value from one temperature unit to another temperature unit
+	- Parameter value: A value needs to be converted
+	- Parameter funit: The unit needs to be converted from
+	- Parameter tunit: The unit needs to be converted to
+	*/
 	private func convert(value: Double, from funit: TemperatureUnit, to tunit: TemperatureUnit) -> Double {
 		switch (funit, tunit) {
 		case (.fahrenheit, .celsius):
