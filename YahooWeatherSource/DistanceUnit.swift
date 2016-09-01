@@ -8,14 +8,15 @@
 
 import Foundation
 
-public enum DistanceUnit: WeatherUnit {
+public enum DistanceUnit: WeatherUnitProtocol {
 	case mi
 	case km
+	typealias valueType = Dictionary<String, AnyObject>
 	
-	func convert(JSON: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
+	func convert(value: valueType) -> valueType {
 		let distanceKey = "visibility"
-		guard self == .km, let visibility = JSON[distanceKey] as? Double else { return JSON }
-		var convertedJSON = JSON
+		guard self == .km, let visibility = value[distanceKey] as? Double else { return value }
+		var convertedJSON = value
 		let convertedVisibility = convert(value: visibility, from: .mi, to: .km)
 		convertedJSON[distanceKey] = convertedVisibility
 		return convertedJSON

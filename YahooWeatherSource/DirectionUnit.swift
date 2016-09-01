@@ -8,13 +8,14 @@
 
 import Foundation
 
-public enum DirectionUnit: WeatherUnit {
+public enum DirectionUnit: WeatherUnitProtocol {
 	case degree
 	case direction
+	typealias valueType = Dictionary<String, AnyObject>
 	
-	func convert(JSON: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
+	func convert(value: valueType) -> valueType {
 		let directionKey = "windDirection"
-		guard self == .direction, let windDirection = (JSON[directionKey] as? NSString)?.doubleValue else { return JSON }
+		guard self == .direction, let windDirection = (value[directionKey] as? NSString)?.doubleValue else { return value }
 		
 		let windDegree: Double
 		if windDirection < 0 {
@@ -26,7 +27,7 @@ public enum DirectionUnit: WeatherUnit {
 		}
 		
 		let degree = convert(degree: windDegree)
-		var convertedJSON = JSON
+		var convertedJSON = value
 		convertedJSON[directionKey] = degree
 		return convertedJSON
 	}

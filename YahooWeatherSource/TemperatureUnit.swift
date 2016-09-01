@@ -8,19 +8,20 @@
 
 import Foundation
 
-public enum TemperatureUnit: WeatherUnit {
+public enum TemperatureUnit: WeatherUnitProtocol {
 	case fahrenheit
 	case celsius
+	typealias valueType = Dictionary<String, AnyObject>
 	
-	func convert(JSON: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject>	{
+	func convert(value: valueType) -> valueType	{
 		if case .fahrenheit = self {
-			return JSON
+			return value
 		}
-		var internalJSON = JSON
-		let weatherMode = JSON["temperature"] is Double
+		var internalJSON = value
+		let weatherMode = value["temperature"] is Double
 		let tempKeys = weatherMode ? ["temperature", "windChill"] : ["high", "low"]
 		for eachKey in tempKeys {
-			internalJSON[eachKey] = convert((JSON[eachKey] as? Double) ?? -1, from: .fahrenheit, to: self)
+			internalJSON[eachKey] = convert((value[eachKey] as? Double) ?? -1, from: .fahrenheit, to: self)
 		}
 		
 		return internalJSON

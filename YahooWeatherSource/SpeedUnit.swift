@@ -8,15 +8,16 @@
 
 import Foundation
 
-public enum SpeedUnit: WeatherUnit {
+public enum SpeedUnit: WeatherUnitProtocol {
 	case mph
 	case kmph
+	typealias valueType = Dictionary<String, AnyObject>
 	
-	func convert(JSON: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
+	func convert(value: valueType) -> valueType {
 		let speedKey = "windSpeed"
-		guard self == kmph, let windSpeed = JSON[speedKey] as? Double else { return JSON }
+		guard self == kmph, let windSpeed = value[speedKey] as? Double else { return value }
 		let convertedSpeed = convert(windSpeed, from: mph, to: kmph)
-		var convertedJSON = JSON
+		var convertedJSON = value
 		convertedJSON[speedKey] = convertedSpeed
 		return convertedJSON
 	}

@@ -8,6 +8,7 @@
 
 import Foundation
 
-protocol WeatherUnit {
-	func convert(JSON: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject>
+protocol WeatherUnitProtocol {
+	associatedtype valueType
+	func convert(value: valueType) -> valueType
 }
