@@ -64,6 +64,29 @@ class YahooWeatherSourceTests: XCTestCase {
 		let cityLoader = CityLoader()
 		cityLoader.loadCity(city: "Halifax") { (cities) in
 			assert(cities.count > 0)
+			assert(cities[0]["name"] as? String == "Halifax")
+			expectation.fulfill()
+		}
+		waitForExpectationsWithTimeout(5, handler: failBlock)
+	}
+	
+	func testDiacriticCityName() {
+		let expectation = expectationWithDescription("loadsCityWithDiacriticNames")
+		let cityLoader = CityLoader()
+		cityLoader.loadCity(city: "Montréal") { (cities) in
+			assert(cities.count > 0)
+			assert(cities[0]["name"] as? String == "Montreal")
+			expectation.fulfill()
+		}
+		waitForExpectationsWithTimeout(5, handler: failBlock)
+	}
+	
+	func testNonEnglishCityName() {
+		let expectation = expectationWithDescription("loadsCityWithDiacriticNames")
+		let cityLoader = CityLoader()
+		cityLoader.loadCity(city: "成都") { (cities) in
+			assert(cities.count > 0)
+			assert(cities[0]["name"] as? String == "Chengdu")
 			expectation.fulfill()
 		}
 		waitForExpectationsWithTimeout(5, handler: failBlock)

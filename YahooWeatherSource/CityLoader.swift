@@ -8,62 +8,67 @@
 
 import Foundation
 
-public struct CityLoader: WeatherSourceProtocol {
-
+public struct CityLoader {
+	
 	let queue: dispatch_queue_t
 	public init() {
 		queue = dispatch_queue_create("CityLoaderQueue", nil)
 	}
 	
-	public func loadCity(city cityName: String, province: String = "", country: String = "", complete: ([NSDictionary]) -> Void) {
+	public func loadCity(city cityName: String, province: String = "", country: String = "", complete: ([Dictionary<String, AnyObject>]) -> Void) {
+		typealias JSON = Dictionary<String, AnyObject>
 		dispatch_async(queue) {
-			let baseSQL: WeatherSourceSQLPatterns = .cityFromName
-			let sql = baseSQL.generateSQL(with: cityName + ", " + province + ", " + country)
-			self.sendRequst(sql) {
-				guard let citiesJSON = $0 as? NSDictionary else {
-					dispatch_async(dispatch_get_main_queue()) {
-						complete([])
+			let baseSQL: WeatherSourceSQL = .cityFromName
+			baseSQL.execute(information: cityName + ", " + province + ", " + country) { result in
+				switch result {
+				case .Success(let citiesJSON):
+					let unwrapped: [JSON]
+					if let places = (citiesJSON["query"]?["results"] as? JSON)?["place"] as? [JSON] {
+						unwrapped = places
+					} else if let place = (citiesJSON["query"]?["results"] as? JSON)?["place"] as? JSON {
+						unwrapped = [place]
+					} else {
+						dispatch_async(dispatch_get_main_queue()) {
+							complete([])
+						}
+						return
 					}
-					return
-				}
-				let unwrapped: [NSDictionary]
-				if let places = (citiesJSON["query"] as? NSDictionary)?["results"]?["place"] as? [NSDictionary] {
-					unwrapped = places
-				} else if let place = (citiesJSON["query"] as? NSDictionary)?["results"]?["place"] as? NSDictionary {
-					unwrapped = [place]
-				} else {
 					dispatch_async(dispatch_get_main_queue()) {
-						complete([])
+						complete(unwrapped)
 					}
-					return
-				}
-				dispatch_async(dispatch_get_main_queue()) {
-					complete(unwrapped)
-				}
-			}
-		}
-	}
-	
-	public func loadCity(woeid woeid: String, complete: (NSDictionary?) -> Void) {
-		dispatch_async(queue) {
-			let baseSQL: WeatherSourceSQLPatterns = .cityFromWoeid
-			let sql = baseSQL.generateSQL(with: woeid)
-			self.sendRequst(sql) {
-				guard let city = (($0 as? NSDictionary)?["query"]?["results"] as? NSDictionary)?["place"] as? NSDictionary else {
-					dispatch_async(dispatch_get_main_queue()) {
-						complete(nil)
-					}
-					return
-				}
-				dispatch_async(dispatch_get_main_queue()) {
-					complete(city)
+				case .Failure(_):
+					complete([])
 				}
 			}
 		}
 	}
 	
 	
-	public func daytime(for city: NSDictionary, complete: (NSDictionary?) -> Void) {
+	public func loadCity(woeid woeid: String, complete: (Dictionary<String, AnyObject>?) -> Void) {
+		typealias JSON = Dictionary<String, AnyObject>
+		dispatch_async(queue) {
+			let baseSQL: WeatherSourceSQL = .cityFromWoeid
+			baseSQL.execute(information: woeid) { (result) in
+				switch result {
+				case .Success(let json):
+					guard let unwrapped = (json["query"]?["results"] as? JSON)?["place"] as? JSON else {
+						dispatch_async(dispatch_get_main_queue()) {
+							complete(nil)
+						}
+						return
+					}
+					dispatch_async(dispatch_get_main_queue()) {
+						complete(unwrapped)
+					}
+				case .Failure(_):
+					complete(nil)
+				}
+			}
+		}
+	}
+
+	
+	public func daytime(for city: Dictionary<String, AnyObject>, complete: (Dictionary<String, AnyObject>?) -> Void) {
 		dispatch_async(queue) {
 			guard let woeid = city["woeid"] as? String else { return }
 			self.updateTime(woeid: woeid) {
@@ -73,7 +78,7 @@ public struct CityLoader: WeatherSourceProtocol {
 					}
 					return
 				}
-				var cityDictionary: Dictionary<String, AnyObject> = city as! Dictionary<String, AnyObject>
+				var cityDictionary: Dictionary<String, AnyObject> = city
 				cityDictionary["sunrise"] = $0
 				cityDictionary["sunset"] = $1
 				complete(cityDictionary)
@@ -83,24 +88,27 @@ public struct CityLoader: WeatherSourceProtocol {
 	
 	public func updateTime(woeid woeid: String, complete: (sunrise: NSDateComponents?, sunset: NSDateComponents?) -> Void ) {
 		dispatch_async(queue) {
-			let baseSQL = WeatherSourceSQLPatterns.daytime
-			let sql = baseSQL.generateSQL(with: woeid)
-			self.sendRequst(sql) {
-				guard
-					let daytimeJSON = $0 as? NSDictionary,
-					let unwrapped = ((daytimeJSON["query"] as? NSDictionary)?["results"]?["channel"] as? NSDictionary)?["astronomy"] as? NSDictionary,
-					let sunriseString = unwrapped["sunrise"] as? String,
-					let sunrise = NSDateComponents(from: sunriseString),
-					let sunsetString = unwrapped["sunset"] as? String,
-					let sunset = NSDateComponents(from: sunsetString)
-				else {
-					dispatch_async(dispatch_get_main_queue()) {
-						complete(sunrise: nil, sunset: nil)
+			let baseSQL: WeatherSourceSQL = .daytime
+			baseSQL.execute(information: woeid) { (result) in
+				switch result {
+				case .Success(let daytimeJSON):
+					guard
+						let unwrapped = (daytimeJSON["query"]?["results"] as? Dictionary<String, AnyObject>)?["channel"]?["astronomy"] as? Dictionary<String, AnyObject>,
+						let sunriseString = unwrapped["sunrise"] as? String,
+						let sunrise = NSDateComponents(from: sunriseString),
+						let sunsetString = unwrapped["sunset"] as? String,
+						let sunset = NSDateComponents(from: sunsetString)
+						else {
+							dispatch_async(dispatch_get_main_queue()) {
+								complete(sunrise: nil, sunset: nil)
+							}
+							return
 					}
-					return
-				}
-				dispatch_async(dispatch_get_main_queue()) {
-					complete(sunrise: sunrise, sunset: sunset)
+					dispatch_async(dispatch_get_main_queue()) {
+						complete(sunrise: sunrise, sunset: sunset)
+					}
+				case .Failure(_):
+					complete(sunrise: nil, sunset: nil)
 				}
 			}
 		}
