@@ -9,12 +9,37 @@
 import Foundation
 
 enum WeatherSourceSQL: String {
+	/**
+	The SQL used for loading weather information
+	*/
 	case weather = "select wind, atmosphere, item.condition, astronomy from weather.forecast where woeid = \"%@\""
+	/**
+	The SQL used for loading forecast information
+	*/
 	case forecast = "select item.forecast from weather.forecast where woeid = \"%@\""
+	/**
+	The SQL for city information by city name
+	*/
 	case cityFromName = "select name, country.content,admin1.content,woeid,centroid,timezone.content from geo.places where text=\"%@\""
+	/**
+	The SQL for city information by WOEID
+	*/
 	case cityFromWoeid = "select name, country.content,admin1.content,woeid,centroid,timezone.content from geo.places where woeid=\"%@\""
+	/**
+	The SQL for day time information by WOEID
+	*/
 	case daytime = "select astronomy from weather.forecast where woeid = \"%@\""
 	
+	/**
+	Execute the SQL with extra information to download related JSON. At the end of the function, the function bypasses calls to a delegate method
+	- Parameter info: Extra information needed for the SQL
+	- Parameter ignoreCache: 
+		A boolean value decides if skipping the local cache.
+		false by default
+	- Parameter complete: 
+		A delegate method used to call at the end of the function.
+		Result can contain a generic type or an ErrorType
+	*/
 	func execute(information info: String, ignoreCache: Bool = false, completion: (Result<Dictionary<String, AnyObject>>) -> Void) {
 		let api = "https://query.yahooapis.com/v1/public/yql?q="
 		let endPoint = "&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys"

@@ -13,6 +13,10 @@ public enum DistanceUnit: WeatherUnitProtocol {
 	case km
 	typealias valueType = Dictionary<String, AnyObject>
 	
+	/**
+	Convert distance unit in weather json or forecast json
+	- Parameter value: json needs to be converted
+	*/
 	func convert(value: valueType) -> valueType {
 		let distanceKey = "visibility"
 		guard self == .km, let visibility = value[distanceKey] as? Double else { return value }
@@ -22,6 +26,12 @@ public enum DistanceUnit: WeatherUnitProtocol {
 		return convertedJSON
 	}
 	
+	/**
+	Convert a value from one distance unit to another distance unit
+	- Parameter value: A value needs to be converted
+	- Parameter funit: The distance unit needs to be converted from
+	- Parameter tunit: The distance unit needs to be converted to
+	*/
 	private func convert(value value: Double, from funit: DistanceUnit, to tunit: DistanceUnit) -> Double {
 		switch (funit, tunit) {
 		case (.mi, .km):

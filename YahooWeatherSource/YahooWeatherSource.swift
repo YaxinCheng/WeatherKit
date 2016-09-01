@@ -10,15 +10,66 @@ import Foundation
 import CoreLocation.CLLocation
 
 public struct YahooWeatherSource {
-	private let queue: dispatch_queue_t
-	private let cache: NSURLCache
+	private let queue: dispatch_queue_t// Async queue
+	private let cache: NSURLCache// URL Cache
+	/**
+	Temeperature unit for weather and forecasts
+	
+	Options: Fahrenheit or Celsius
+	*/
 	var temperatureUnit: TemperatureUnit
+	
+	/**
+	Distance unit for weather
+	
+	Options: Meters or Kilometers
+	*/
 	var distanceUnit: DistanceUnit
+
+	/**
+	Direction unit for weather
+	
+	Options: Degrees or Compass Direction
+	*/
 	var directionUnit: DirectionUnit
+	
+	/**
+	Speed unit for weather
+	
+	Options: Meters/hour or Kilometers/hour
+	*/
 	var speedUnit: SpeedUnit
 	
+	/**
+	Constructs a new weather source object with related units
+	
+	- Parameter temperatureUnit:
+		Temeperature unit for weather and forecasts
+	
+		Options: Fahrenheit or Celsius
+	
+		Celsius by default
+	- Parameter distanceUnit:
+		Distance unit for weather
+		
+		Options: Meters or Kilometers
+		
+		Meters by default
+	- Parameter directionUnit:
+		Direction unit for weather
+		
+		Options: Degrees or Compass Direction
+		
+		Compass Direction by default
+	- Parameter speedUnit:
+		Speed unit for weather
+		
+		Options: Meters/hour or Kilometers/hour
+		
+		Meters/hour by default
+	*/
 	public init(temperatureUnit tunit: TemperatureUnit = .celsius, distanceUnit: DistanceUnit = .mi, directionUnit: DirectionUnit = .direction, speedUnit: SpeedUnit = .mph) {
-		temperatureUnit = tunit
+		self.temperatureUnit = tunit
 		self.distanceUnit = distanceUnit
 		self.directionUnit = directionUnit
 		self.speedUnit = speedUnit
@@ -27,6 +78,19 @@ public struct YahooWeatherSource {
 		NSURLCache.setSharedURLCache(cache)
 	}
 	
+	/**
+	Search and load current weather information by city information like names. At the end of the function, the function bypasses calls to a delegate method
+	
+	- Parameter city:
+		Name of the city using for searching
+	- Parameter province:
+		Name of the province where the city is, using for narrowing down the searching scope
+	- Parameter country:
+		Name of the country where the province is, using for narrowing down the searching scope
+	- Parameter complete:
+		A delegate method used to call at the end of the function.
+		Result can contain a generic type or an ErrorType
+	*/
 	public func currentWeather(city city: String, province: String = "", country: String = "", complete: (Result<Dictionary<String, AnyObject>>) -> Void) {
 		dispatch_async(queue) {
 			let cityLoader = CityLoader()
@@ -41,6 +105,15 @@ public struct YahooWeatherSource {
 		}
 	}
 	
+	/**
+	Search and load current weather information by CLLocation. At the end of the function, the function bypasses calls to a delegate method
+	
+	- Parameter location: 
+		Location used for searching and loading weather information
+	- Parameter complete:
+		A delegate method used to call at the end of the function.
+		Result can contain a generic type or an ErrorType
+	*/
 	public func currentWeather(at location: CLLocation, complete: (Result<Dictionary<String, AnyObject>>) -> Void) {
 		locationParse(at: location) {
 			guard let city = $0 else {
@@ -54,6 +127,14 @@ public struct YahooWeatherSource {
 		}
 	}
 	
+	/**
+	Parse a CLLocation to string information of city, province, country
+	- Parameter location:
+		Location needs to be parsed
+	- Parameter complete:
+		A delegate method used to call at the end of the function.
+		Result can contain a generic type or an ErrorType
+	*/
 	public func locationParse(at location: CLLocation, complete: (Dictionary<String, AnyObject>?) -> Void) {
 		let geoCoder = CLGeocoder()
 		dispatch_async(queue) {
@@ -86,6 +167,18 @@ public struct YahooWeatherSource {
 		}
 	}
 	
+	/**
+	Search and load five days weather forecasts by city information like names. At the end of the function, the function bypasses calls to a delegate method
+	- Parameter city:
+		Name of the city using for searching
+	- Parameter province:
+		Name of the province where the city is, using for narrowing down the searching scope
+	- Parameter country:
+		Name of the country where the province is, using for narrowing down the searching scope
+	- Parameter complete:
+		A delegate method used to call at the end of the function.
+		Result can contain a generic type or an ErrorType
+	*/
 	public func fivedaysForecast(city city: String, province: String, country: String, complete: (Result<[Dictionary<String, AnyObject>]>) -> Void) {
 		dispatch_async(queue) {
 			let cityLoader = CityLoader()
@@ -100,6 +193,15 @@ public struct YahooWeatherSource {
 		}
 	}
 	
+	/**
+	Search and load five days weather forecasts by CLLocation. At the end of the function, the function bypasses calls to a delegate method
+	
+	- Parameter location:
+		Location used for searching and loading weather information
+	- Parameter complete:
+		A delegate method used to call at the end of the function.
+		Result can contain a generic type or an ErrorType
+	*/
 	public func fivedaysForecast(at location: CLLocation, complete: (Result<[Dictionary<String, AnyObject>]> -> Void)) {
 		locationParse(at: location) {
 			guard let city = $0 else {
@@ -113,6 +215,15 @@ public struct YahooWeatherSource {
 		}
 	}
 	
+	/**
+	Load weather information by woeid. At the end of the function, the function bypasses calls to a delegate method
+	
+	- Parameter woeid:
+		WOEID is a unique value used to locate a city
+	- Parameter complete:
+		A delegate method used to call at the end of the function.
+		Result can contain a generic type or an ErrorType
+	*/
 	private func loadWeatherData(woeid woeid: String, complete: (Result<Dictionary<String, AnyObject>>) -> Void) {
 		let baseSQL:WeatherSourceSQL = .weather
 		typealias JSON = Dictionary<String, AnyObject>
@@ -146,6 +257,15 @@ public struct YahooWeatherSource {
 		}
 	}
 	
+	/**
+	Load forecasts information by woeid. At the end of the function, the function bypasses calls to a delegate method
+	
+	- Parameter woeid:
+	WOEID is a unique value used to locate a city
+	- Parameter complete:
+	A delegate method used to call at the end of the function.
+	Result can contain a generic type or an ErrorType
+	*/
 	private func loadForecasts(woeid woeid: String, complete: (Result<[Dictionary<String, AnyObject>]>) -> Void) {
 		let baseSQL:WeatherSourceSQL = .forecast
 		typealias JSON = Dictionary<String, AnyObject>
@@ -178,6 +298,14 @@ public struct YahooWeatherSource {
 		}
 	}
 	
+	/**
+	Unwrap the original JSON from Yahoo, and pack them again to simpler architectures
+	
+	- Parameter json:
+		Original json needs to be re-structured
+	- returns:
+		A newly packed json
+	*/
 	private func formatWeatherJSON(json: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
 		var newJSON = Dictionary<String, AnyObject>()
 		newJSON["temperature"] = ((json["item"]?["condition"] as? Dictionary<String, AnyObject>)?["temp"] as? NSString)?.doubleValue
@@ -195,6 +323,9 @@ public struct YahooWeatherSource {
 		return newJSON
 	}
 	
+	/**
+	Clear stored request cache
+	*/
 	public func clearCache() {
 		cache.removeAllCachedResponses()
 	}
