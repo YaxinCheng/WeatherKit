@@ -11,4 +11,12 @@ import Foundation
 public enum Result<T> {
 	case Success(T)
 	case Failure(ErrorType)
+	
+	init(error: ErrorType) {
+		self = Result.Failure(error)
+	}
+	
+	init(value: T) {
+		self = Result.Success(value)
+	}
 }

@@ -9,22 +9,30 @@
 import Foundation
 import CoreLocation.CLLocation
 
-public struct YahooWeatherSource: WeatherSourceProtocol {
+public struct YahooWeatherSource {
 	private let queue: dispatch_queue_t
 	private let cache: NSURLCache
+	var temperatureUnit: TemperatureUnit
+	var distanceUnit: DistanceUnit
+	var directionUnit: DirectionUnit
+	var speedUnit: SpeedUnit
 	
-	public init() {
+	public init(temperatureUnit tunit: TemperatureUnit = .celsius, distanceUnit: DistanceUnit = .mi, directionUnit: DirectionUnit = .direction, speedUnit: SpeedUnit = .mph) {
+		temperatureUnit = tunit
+		self.distanceUnit = distanceUnit
+		self.directionUnit = directionUnit
+		self.speedUnit = speedUnit
 		queue = dispatch_queue_create("WeatherSourceQueue", nil)
 		cache = NSURLCache(memoryCapacity: 10 * 1024 * 1024, diskCapacity: 30 * 1024 * 1024, diskPath: "weather.urlcache")
 		NSURLCache.setSharedURLCache(cache)
 	}
 	
-	public func currentWeather(city city: String, province: String = "", country: String = "", complete: (Result<NSDictionary>) -> Void) {
+	public func currentWeather(city city: String, province: String = "", country: String = "", complete: (Result<Dictionary<String, AnyObject>>) -> Void) {
 		dispatch_async(queue) {
 			let cityLoader = CityLoader()
 			cityLoader.loadCity(city: city, province: province, country: country) {
 				guard let woeid = $0.first?["woeid"] as? String else {
-					let errorResult = Result<NSDictionary>.Failure(YahooWeatherError.FailedFindingCity)
+					let errorResult = Result<Dictionary<String, AnyObject>>(error: YahooWeatherError.FailedFindingCity)
 					complete(errorResult)
 					return
 				}
@@ -33,10 +41,10 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 		}
 	}
 	
-	public func currentWeather(at location: CLLocation, complete: (Result<NSDictionary>) -> Void) {
+	public func currentWeather(at location: CLLocation, complete: (Result<Dictionary<String, AnyObject>>) -> Void) {
 		locationParse(at: location) {
 			guard let city = $0 else {
-				let errorResult = Result<NSDictionary>.Failure(YahooWeatherError.FailedFindingCity)
+				let errorResult = Result<Dictionary<String, AnyObject>>(error: YahooWeatherError.FailedFindingCity)
 				complete(errorResult)
 				return
 			}
@@ -46,7 +54,7 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 		}
 	}
 	
-	public func locationParse(at location: CLLocation, complete: (NSDictionary?) -> Void) {
+	public func locationParse(at location: CLLocation, complete: (Dictionary<String, AnyObject>?) -> Void) {
 		let geoCoder = CLGeocoder()
 		dispatch_async(queue) {
 			geoCoder.reverseGeocodeLocation(location) { (placeMarks, error) in
@@ -57,9 +65,9 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 				} else {
 					guard
 						let mark = placeMarks?.first,
-						let state = (mark.addressDictionary?["State"] as? String)?.formatted,
-						let country = (mark.addressDictionary?["Country"] as? String)?.formatted,
-						let city = (mark.addressDictionary?["City"] as? String)?.formatted
+						let state = mark.addressDictionary?["State"] as? String,
+						let country = mark.addressDictionary?["Country"] as? String,
+						let city = mark.addressDictionary?["City"] as? String
 					else {
 							dispatch_async(dispatch_get_main_queue()) {
 								complete(nil)
@@ -78,12 +86,12 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 		}
 	}
 	
-	public func fivedaysForecast(city city: String, province: String, country: String, complete: (Result<[NSDictionary]>) -> Void) {
+	public func fivedaysForecast(city city: String, province: String, country: String, complete: (Result<[Dictionary<String, AnyObject>]>) -> Void) {
 		dispatch_async(queue) {
 			let cityLoader = CityLoader()
 			cityLoader.loadCity(city: city, province: province, country: country) {
 				guard let woeid = $0.first?["woeid"] as? String else {
-					let errorResult = Result<[NSDictionary]>.Failure(YahooWeatherError.FailedFindingCity)
+					let errorResult = Result<[Dictionary<String, AnyObject>]>(error: YahooWeatherError.FailedFindingCity)
 					complete(errorResult)
 					return
 				}
@@ -92,10 +100,10 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 		}
 	}
 	
-	public func fivedaysForecast(at location: CLLocation, complete: (Result<[NSDictionary]> -> Void)) {
+	public func fivedaysForecast(at location: CLLocation, complete: (Result<[Dictionary<String, AnyObject>]> -> Void)) {
 		locationParse(at: location) {
 			guard let city = $0 else {
-				let errorResult = Result<[NSDictionary]>.Failure(YahooWeatherError.FailedFindingCity)
+				let errorResult = Result<[Dictionary<String, AnyObject>]>(error: YahooWeatherError.FailedFindingCity)
 				complete(errorResult)
 				return
 			}
@@ -105,48 +113,66 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 		}
 	}
 	
-	private func loadWeatherData(woeid woeid: String, complete: (Result<NSDictionary>) -> Void) {
-		let baseSQL:WeatherSourceSQLPatterns = .weather
-		let completeSQL = baseSQL.generateSQL(with: woeid)
-		
+	private func loadWeatherData(woeid woeid: String, complete: (Result<Dictionary<String, AnyObject>>) -> Void) {
+		let baseSQL:WeatherSourceSQL = .weather
+		typealias JSON = Dictionary<String, AnyObject>
 		dispatch_async(queue) {
-			self.sendRequst(completeSQL) {
-				guard let weatherJSON = $0 as? NSDictionary,
-					let unwrapped = (weatherJSON["query"] as? NSDictionary)?["results"]?["channel"] as? Dictionary<String, AnyObject>
-					else {
-						let error = Result<NSDictionary>.Failure(YahooWeatherError.LoadFailed)
+			baseSQL.execute(information: woeid) { (result) in
+				switch result {
+				case .Success(let weatherJSON):
+					guard let unwrapped = (weatherJSON["query"]?["results"] as? JSON)?["channel"] as? JSON else {
+						let error = Result<JSON>(error: YahooWeatherError.LoadFailed)
 						dispatch_async(dispatch_get_main_queue()) {
 							complete(error)
 						}
 						return
-				}
-				let formattedJSON = self.formatWeatherJSON(unwrapped)
-				let result = Result<NSDictionary>.Success(formattedJSON)
-				dispatch_async(dispatch_get_main_queue()) {
+					}
+					let formattedJSON: JSON = {
+						let format = self.formatWeatherJSON(unwrapped)
+						let temperatureUnitConvertedJSON = self.temperatureUnit.convert(format)
+						let distanceUnitConvertedJSON = self.distanceUnit.convert(temperatureUnitConvertedJSON)
+						let directionUnitConvertedJSON = self.directionUnit.convert(distanceUnitConvertedJSON)
+						let speedUnitConvertedJSON = self.speedUnit.convert(directionUnitConvertedJSON)
+						return speedUnitConvertedJSON
+					}()
+					let result = Result<JSON>(value: formattedJSON)
+					dispatch_async(dispatch_get_main_queue()) {
+						complete(result)
+					}
+				case .Failure(_):
 					complete(result)
 				}
 			}
 		}
 	}
 	
-	private func loadForecasts(woeid woeid: String, complete: (Result<[NSDictionary]>) -> Void) {
-		let baseSQL:WeatherSourceSQLPatterns = .forecast
-		let completeSQL = baseSQL.generateSQL(with: woeid)
+	private func loadForecasts(woeid woeid: String, complete: (Result<[Dictionary<String, AnyObject>]>) -> Void) {
+		let baseSQL:WeatherSourceSQL = .forecast
+		typealias JSON = Dictionary<String, AnyObject>
 		dispatch_async(queue) {
-			self.sendRequst(completeSQL) {
-				guard let weatherJSON = $0 as? NSDictionary,
-					let unwrapped = (((weatherJSON["query"] as? NSDictionary)?["results"] as? NSDictionary)?["channel"]) as? [Dictionary<String, AnyObject>]
-					else {
-						let error = Result<[NSDictionary]>.Failure(YahooWeatherError.LoadFailed)
+			baseSQL.execute(information: woeid) { (result) in
+				switch result {
+				case .Success(let yahooJSON):
+					guard let unwrapped = (yahooJSON["query"]?["results"] as? JSON)?["channel"] as? [JSON] else {
+						let error = Result<[JSON]>(error: YahooWeatherError.LoadFailed)
 						dispatch_async(dispatch_get_main_queue()) {
 							complete(error)
 						}
 						return
-				}
-				let forecasts = unwrapped.flatMap { $0["item"]?["forecast"] as? NSDictionary }
-				let result = Result<[NSDictionary]>.Success(forecasts)
-				dispatch_async(dispatch_get_main_queue()) {
-					complete(result)
+					}
+					print(unwrapped.count)
+					print(unwrapped)
+					let forecasts = unwrapped
+						.flatMap { $0["item"]?["forecast"] as? Dictionary<String, AnyObject> }
+						.map { self.temperatureUnit.convert($0) }
+						.map { self.distanceUnit.convert($0) }
+					let result = Result<[JSON]>(value: forecasts)
+					dispatch_async(dispatch_get_main_queue()) {
+						complete(result)
+					}
+				case .Failure(let error):
+					let errorResult = Result<[JSON]>(error: error)
+					complete(errorResult)
 				}
 			}
 		}
@@ -154,18 +180,23 @@ public struct YahooWeatherSource: WeatherSourceProtocol {
 	
 	private func formatWeatherJSON(json: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
 		var newJSON = Dictionary<String, AnyObject>()
-		newJSON["temperature"] = ((json["item"]?["condition"] as? NSDictionary)?["temp"] as? NSString)?.doubleValue
-		newJSON["condition"] = (json["item"]?["condition"] as? NSDictionary)?["text"]
-		newJSON["windChill"] = json["wind"]?["chill"]
-		newJSON["windSpeed"] = json["wind"]?["speed"]
+		newJSON["temperature"] = ((json["item"]?["condition"] as? Dictionary<String, AnyObject>)?["temp"] as? NSString)?.doubleValue
+		newJSON["condition"] = (json["item"]?["condition"] as? Dictionary<String, AnyObject>)?["text"]
+		newJSON["windChill"] = (json["wind"]?["chill"] as? NSString)?.doubleValue
+		newJSON["windSpeed"] = (json["wind"]?["speed"] as? NSString)?.doubleValue
 		newJSON["windDirection"] = json["wind"]?["direction"]
 		newJSON["humidity"] = json["atmosphere"]?["humidity"]
 		newJSON["visibility"] = json["atmosphere"]?["visibility"]
 		newJSON["pressure"] = json["atmosphere"]?["pressure"]
+		newJSON["trend"] = (json["atmosphere"]?["rising"] as? Int) == 0 ? "Falling" : "Rising"
 		newJSON["sunrise"] = NSDateComponents(from: (json["astronomy"]?["sunrise"] as? String) ?? "")
 		newJSON["sunset"] = NSDateComponents(from: (json["astronomy"]?["sunset"] as? String) ?? "")
 		
 		return newJSON
+	}
+	
+	public func clearCache() {
+		cache.removeAllCachedResponses()
 	}
 }
 
