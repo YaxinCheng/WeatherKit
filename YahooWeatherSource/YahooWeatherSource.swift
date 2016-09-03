@@ -280,8 +280,6 @@ public struct YahooWeatherSource {
 						}
 						return
 					}
-					print(unwrapped.count)
-					print(unwrapped)
 					let forecasts = unwrapped
 						.flatMap { $0["item"]?["forecast"] as? Dictionary<String, AnyObject> }
 						.map { self.temperatureUnit.convert($0) }
