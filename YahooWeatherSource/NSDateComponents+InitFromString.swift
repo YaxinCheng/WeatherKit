@@ -15,7 +15,8 @@ extension NSDateComponents {
 	Contruction will fail if the string is in a wrong format.
 	
 	- Parameter timeString: 
-		Such as "2:30AM", "11:30PM"
+		Such as "2:30 AM", "11:30 PM"
+		Make sure the AM, PM identifier are space separated
 	- returns: 
 		An initialized object with .hour and .minute set, or nil if timeString is in a wrong format
 	*/
