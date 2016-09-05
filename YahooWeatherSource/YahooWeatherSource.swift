@@ -282,6 +282,7 @@ public struct YahooWeatherSource {
 					}
 					let forecasts = unwrapped
 						.flatMap { $0["item"]?["forecast"] as? Dictionary<String, AnyObject> }
+						.map { self.formatForecastJSON($0) }
 						.map { self.temperatureUnit.convert($0) }
 						.map { self.distanceUnit.convert($0) }
 					let result = Result<[JSON]>(value: forecasts)
@@ -318,6 +319,21 @@ public struct YahooWeatherSource {
 		newJSON["sunrise"] = NSDateComponents(from: (json["astronomy"]?["sunrise"] as? String) ?? "")
 		newJSON["sunset"] = NSDateComponents(from: (json["astronomy"]?["sunset"] as? String) ?? "")
 		
+		return newJSON
+	}
+	
+	/**
+	Convert the string values of json to double values
+	
+	- Parameter json:
+	Original json needs to be re-structured
+	- returns:
+	A newly packed json
+	*/
+	private func formatForecastJSON(json: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
+		var newJSON = json
+		newJSON["high"] = (json["high"] as? NSString)?.doubleValue
+		newJSON["low"] = (json["low"] as? NSString)?.doubleValue
 		return newJSON
 	}
 	
