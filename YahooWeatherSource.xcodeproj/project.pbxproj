@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E305F0411D73A9D900F055B4 /* WeatherUnitProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E305F0401D73A9D900F055B4 /* WeatherUnitProtocol.swift */; };
 		E305F0431D73AA7100F055B4 /* DistanceUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E305F0421D73AA7100F055B4 /* DistanceUnit.swift */; };
 		E30A85611D7508500073EC44 /* DirectionUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30A85601D7508500073EC44 /* DirectionUnit.swift */; };
 		E30A85631D754E190073EC44 /* SpeedUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30A85621D754E190073EC44 /* SpeedUnit.swift */; };
@@ -33,7 +32,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		E305F0401D73A9D900F055B4 /* WeatherUnitProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherUnitProtocol.swift; sourceTree = "<group>"; };
 		E305F0421D73AA7100F055B4 /* DistanceUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DistanceUnit.swift; sourceTree = "<group>"; };
 		E30A85601D7508500073EC44 /* DirectionUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DirectionUnit.swift; sourceTree = "<group>"; };
 		E30A85621D754E190073EC44 /* SpeedUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeedUnit.swift; sourceTree = "<group>"; };
@@ -73,7 +71,6 @@
 		E30A85641D7681830073EC44 /* Unit Conversion */ = {
 			isa = PBXGroup;
 			children = (
-				E305F0401D73A9D900F055B4 /* WeatherUnitProtocol.swift */,
 				E3CB87061D66D08700ABC10D /* TemperatureUnit.swift */,
 				E305F0421D73AA7100F055B4 /* DistanceUnit.swift */,
 				E30A85601D7508500073EC44 /* DirectionUnit.swift */,
@@ -232,7 +229,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E305F0411D73A9D900F055B4 /* WeatherUnitProtocol.swift in Sources */,
 				E3CB87161D66F96800ABC10D /* CityLoader.swift in Sources */,
 				E3CB87951D6C150200ABC10D /* NSDateComponents+InitFromString.swift in Sources */,
 				E30A85631D754E190073EC44 /* SpeedUnit.swift in Sources */,

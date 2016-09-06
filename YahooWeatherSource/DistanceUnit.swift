@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum DistanceUnit: WeatherUnitProtocol {
+public enum DistanceUnit {
 	case mi
 	case km
 	typealias valueType = Dictionary<String, AnyObject>

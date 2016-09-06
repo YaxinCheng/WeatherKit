@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum SpeedUnit: WeatherUnitProtocol {
+public enum SpeedUnit {
 	case mph
 	case kmph
 	typealias valueType = Dictionary<String, AnyObject>

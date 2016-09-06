@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum TemperatureUnit: WeatherUnitProtocol {
+public enum TemperatureUnit {
 	case fahrenheit
 	case celsius
 	typealias valueType = Dictionary<String, AnyObject>
