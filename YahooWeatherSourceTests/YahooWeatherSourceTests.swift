@@ -126,7 +126,7 @@ class YahooWeatherSourceTests: XCTestCase {
 	
 	func testParseLocation() {
 		let expectation = expectationWithDescription("locationParse")
-		weatherSource.locationParse(at: halifaxLocation) {
+		weatherSource.locationParse(location: halifaxLocation) {
 			assert($0 != nil)
 			assert($0!["name"] is String)
 			assert($0!["name"] as! String == "Halifax")
@@ -141,7 +141,7 @@ class YahooWeatherSourceTests: XCTestCase {
 	
 	func testWeatherByName() {
 		let expectation = expectationWithDescription("weatherByName")
-		weatherSource.currentWeather(city: "Halifax", province: "Nova Scotia", country: "Canada") { result in
+		weatherSource.weather(city: "Halifax", province: "Nova Scotia", country: "Canada") { result in
 			if case .Success(let json) = result {
 				assert(json["error"] == nil)
 				expectation.fulfill()
@@ -154,7 +154,7 @@ class YahooWeatherSourceTests: XCTestCase {
 	
 	func testWeatherByLocation() {
 		let expectation = expectationWithDescription("weatherByLocation")
-		weatherSource.currentWeather(at: halifaxLocation) { (result) in
+		weatherSource.weather(location: halifaxLocation) { (result) in
 			if case .Success(let json) = result {
 				assert(json["error"] == nil)
 				expectation.fulfill()
@@ -167,7 +167,7 @@ class YahooWeatherSourceTests: XCTestCase {
 	
 	func testForecastByName() {
 		let expectation = expectationWithDescription("forecastByName")
-		weatherSource.fivedaysForecast(city: "Halifax", province: "Nova Scotia", country: "Canada") { result in
+		weatherSource.forecast(city: "Halifax", province: "Nova Scotia", country: "Canada") { result in
 			if case .Success(let forecasts) = result {
 				assert(forecasts.count == 10)
 				expectation.fulfill()
@@ -180,7 +180,7 @@ class YahooWeatherSourceTests: XCTestCase {
 	
 	func testForecastByLocation() {
 		let expectation = expectationWithDescription("forecastsByLocation")
-		weatherSource.fivedaysForecast(at: halifaxLocation) { (result) in
+		weatherSource.forecast(location: halifaxLocation) { (result) in
 			if case .Success(let forecasts) = result {
 				assert(forecasts.count == 10)
 				expectation.fulfill()

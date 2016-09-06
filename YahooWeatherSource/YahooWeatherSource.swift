@@ -91,7 +91,7 @@ public struct YahooWeatherSource {
 		A delegate method used to call at the end of the function.
 		Result can contain a generic type or an ErrorType
 	*/
-	public func currentWeather(city city: String, province: String = "", country: String = "", complete: (Result<Dictionary<String, AnyObject>>) -> Void) {
+	public func weather(city city: String, province: String = "", country: String = "", complete: (Result<Dictionary<String, AnyObject>>) -> Void) {
 		dispatch_async(queue) {
 			let cityLoader = CityLoader()
 			cityLoader.loadCity(city: city, province: province, country: country) {
@@ -114,8 +114,8 @@ public struct YahooWeatherSource {
 		A delegate method used to call at the end of the function.
 		Result can contain a generic type or an ErrorType
 	*/
-	public func currentWeather(at location: CLLocation, complete: (Result<Dictionary<String, AnyObject>>) -> Void) {
-		locationParse(at: location) {
+	public func weather(location location: CLLocation, complete: (Result<Dictionary<String, AnyObject>>) -> Void) {
+		locationParse(location: location) {
 			guard let city = $0 else {
 				let errorResult = Result<Dictionary<String, AnyObject>>(error: YahooWeatherError.FailedFindingCity)
 				complete(errorResult)
@@ -135,7 +135,7 @@ public struct YahooWeatherSource {
 		A delegate method used to call at the end of the function.
 		Result can contain a generic type or an ErrorType
 	*/
-	public func locationParse(at location: CLLocation, complete: (Dictionary<String, AnyObject>?) -> Void) {
+	public func locationParse(location location: CLLocation, complete: (Dictionary<String, AnyObject>?) -> Void) {
 		let geoCoder = CLGeocoder()
 		dispatch_async(queue) {
 			geoCoder.reverseGeocodeLocation(location) { (placeMarks, error) in
@@ -179,7 +179,7 @@ public struct YahooWeatherSource {
 		A delegate method used to call at the end of the function.
 		Result can contain a generic type or an ErrorType
 	*/
-	public func fivedaysForecast(city city: String, province: String, country: String, complete: (Result<[Dictionary<String, AnyObject>]>) -> Void) {
+	public func forecast(city city: String, province: String, country: String, complete: (Result<[Dictionary<String, AnyObject>]>) -> Void) {
 		dispatch_async(queue) {
 			let cityLoader = CityLoader()
 			cityLoader.loadCity(city: city, province: province, country: country) {
@@ -202,8 +202,8 @@ public struct YahooWeatherSource {
 		A delegate method used to call at the end of the function.
 		Result can contain a generic type or an ErrorType
 	*/
-	public func fivedaysForecast(at location: CLLocation, complete: (Result<[Dictionary<String, AnyObject>]> -> Void)) {
-		locationParse(at: location) {
+	public func forecast(location location: CLLocation, complete: (Result<[Dictionary<String, AnyObject>]> -> Void)) {
+		locationParse(location: location) {
 			guard let city = $0 else {
 				let errorResult = Result<[Dictionary<String, AnyObject>]>(error: YahooWeatherError.FailedFindingCity)
 				complete(errorResult)
