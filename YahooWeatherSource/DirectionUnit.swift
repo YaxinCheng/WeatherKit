@@ -11,13 +11,12 @@ import Foundation
 public enum DirectionUnit {
 	case degree
 	case direction
-	typealias valueType = Dictionary<String, AnyObject>
 	
 	/**
 	Convert distance unit in weather json or forecast json
 	- Parameter value: json needs to be converted
 	*/
-	func convert(value: valueType) -> valueType {
+	func convert(value: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
 		let directionKey = "windDirection"
 		guard self == .direction, let windDirection = (value[directionKey] as? NSString)?.doubleValue else { return value }
 		

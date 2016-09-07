@@ -11,13 +11,12 @@ import Foundation
 public enum TemperatureUnit {
 	case fahrenheit
 	case celsius
-	typealias valueType = Dictionary<String, AnyObject>
 	
 	/**
 	Convert temperature unit in weather json or forecast json
 	- Parameter value: json needs to be converted
 	*/
-	func convert(value: valueType) -> valueType	{
+	func convert(value: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject>	{
 		if case .fahrenheit = self {
 			return value
 		}

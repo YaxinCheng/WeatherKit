@@ -11,13 +11,12 @@ import Foundation
 public enum SpeedUnit {
 	case mph
 	case kmph
-	typealias valueType = Dictionary<String, AnyObject>
 	
 	/**
 	Convert distance unit in weather json or forecast json
 	- Parameter value: json needs to be converted
 	*/
-	func convert(value: valueType) -> valueType {
+	func convert(value: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
 		let speedKey = "windSpeed"
 		guard self == kmph, let windSpeed = value[speedKey] as? Double else { return value }
 		let convertedSpeed = convert(windSpeed, from: mph, to: kmph)
@@ -35,9 +34,9 @@ public enum SpeedUnit {
 	private func convert(value: Double, from funit: SpeedUnit, to tunit: SpeedUnit) -> Double {
 		switch (funit, tunit) {
 		case (mph, kmph):
-			return value / 1000
+			return value * 1.61
 		case (kmph, mph):
-			return value * 1000
+			return value / 1.61
 		default:
 			return value
 		}

@@ -19,7 +19,6 @@ class YahooWeatherSourceTests: XCTestCase {
 	var mockWeatherCelJSON: Dictionary<String, Double>!
 	var mockForecastFahJSON: Dictionary<String, Double>!
 	var mockForecastCelJSON: Dictionary<String, Double>!
-	var mockWeatherMiJSON: Dictionary<String, Double>!
 	
 	override func setUp() {
 		super.setUp()
@@ -37,7 +36,6 @@ class YahooWeatherSourceTests: XCTestCase {
 		halifaxLocation = CLLocation(latitude: 44.642078, longitude: -63.620571)
 		mockWeatherFahJSON = ["temperature": 73.0, "windChill": 77.0]
 		mockForecastFahJSON = ["high": 77.0, "low": 73.0]
-		mockWeatherMiJSON = ["visibility": 16.1]
 		failBlock = {
 			guard let error = $0 else { return }
 			print(error.localizedDescription)
@@ -223,13 +221,14 @@ class YahooWeatherSourceTests: XCTestCase {
 	}
 	
 	func testDistanceUnitConversion() {
+		let mockWeatherMiJSON = ["visibility": 10.0]
 		let sameJSON = weatherSource.distanceUnit.convert(mockWeatherMiJSON)
 		assert(sameJSON["visibility"] is Double)
 		assert((sameJSON["visibility"] as! Double) == mockWeatherMiJSON["visibility"])
 		weatherSource.distanceUnit = .km
 		let kmJSON = weatherSource.distanceUnit.convert(mockWeatherMiJSON)
 		guard let visibilityInKM = kmJSON["visibility"] as? Double else { XCTFail(); return }
-		assert(visibilityInKM - 0.0161 <= 0.0001)
+		assert(visibilityInKM - 16.1 <= 0.001)
 	}
 	
 	func testDirectionUnitConversion() {
@@ -245,7 +244,7 @@ class YahooWeatherSourceTests: XCTestCase {
 	}
 	
 	func testSpeedUnitConversion() {
-		let originalSpeed: Double = 1234
+		let originalSpeed: Double = 10
 		let mockSpeedJSON = ["windSpeed": originalSpeed]
 		let sameJSON = weatherSource.speedUnit.convert(mockSpeedJSON)
 		assert(sameJSON["windSpeed"] is Double)
@@ -253,7 +252,7 @@ class YahooWeatherSourceTests: XCTestCase {
 		weatherSource.speedUnit = .kmph
 		let speedJSON = weatherSource.speedUnit.convert(mockSpeedJSON)
 		assert(speedJSON["windSpeed"] is Double)
-		assert((speedJSON["windSpeed"] as! Double) - (originalSpeed / 1000) <= 0.00001)
+		assert((speedJSON["windSpeed"] as! Double) - 16.1 <= 0.01)
 	}
 	
 //	func testPerformanceExample() {

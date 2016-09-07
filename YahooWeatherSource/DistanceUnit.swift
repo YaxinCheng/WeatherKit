@@ -11,13 +11,12 @@ import Foundation
 public enum DistanceUnit {
 	case mi
 	case km
-	typealias valueType = Dictionary<String, AnyObject>
 	
 	/**
 	Convert distance unit in weather json or forecast json
 	- Parameter value: json needs to be converted
 	*/
-	func convert(value: valueType) -> valueType {
+	func convert(value: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
 		let distanceKey = "visibility"
 		guard self == .km, let visibility = value[distanceKey] as? Double else { return value }
 		var convertedJSON = value
@@ -35,9 +34,9 @@ public enum DistanceUnit {
 	private func convert(value value: Double, from funit: DistanceUnit, to tunit: DistanceUnit) -> Double {
 		switch (funit, tunit) {
 		case (.mi, .km):
-			return value / 1000
+			return value * 1.61
 		case (.km, .mi):
-			return value * 1000
+			return value / 1.61
 		default:
 			return value
 		}
