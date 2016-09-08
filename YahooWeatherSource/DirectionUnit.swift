@@ -42,7 +42,7 @@ public enum DirectionUnit {
 	private func convert(degree windDegree: Double) -> String {
 		let deviation = 11.25
 		switch windDegree {
-		case let degree where degree >= 31 * deviation || degree < deviation:
+		case let degree where degree >= 31 * deviation && degree < deviation:
 			return "N"
 		case let degree where degree < 3 * deviation:
 			return "NNE"
@@ -73,7 +73,7 @@ public enum DirectionUnit {
 		case let degree where degree < 29 * deviation:
 			return "NW"
 		default:
-			return "DEGREE ERROR"
+			return "NNW"
 		}
 	}
 }
