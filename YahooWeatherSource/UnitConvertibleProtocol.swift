@@ -18,7 +18,7 @@ extension UnitConvertibleProtocol {
 	- Parameter funit: The unit needs to be converted from
 	- Parameter tunit: The unit needs to be converted to
 	*/
-	func convert(value: Double, from funit: TemperatureUnit, to tunit: TemperatureUnit) -> Double {
+	public func convert(value: Double, from funit: TemperatureUnit, to tunit: TemperatureUnit) -> Double {
 		switch (funit, tunit) {
 		case (.fahrenheit, .celsius):
 			return (value - 32) / 1.8
@@ -35,7 +35,7 @@ extension UnitConvertibleProtocol {
 	- Parameter funit: The distance unit needs to be converted from
 	- Parameter tunit: The distance unit needs to be converted to
 	*/
-	func convert(value value: Double, from funit: DistanceUnit, to tunit: DistanceUnit) -> Double {
+	public func convert(value value: Double, from funit: DistanceUnit, to tunit: DistanceUnit) -> Double {
 		switch (funit, tunit) {
 		case (.mi, .km):
 			return value * 1.61
@@ -50,7 +50,7 @@ extension UnitConvertibleProtocol {
 	Convert a value from one distance unit to another direction unit
 	- Parameter windDegree: The wind degree needs to be converted
 	*/
-	func convert(degree windDegree: Double) -> String {
+	public func convert(degree windDegree: Double) -> String {
 		let deviation = 11.25
 		switch windDegree {
 		case let degree where degree >= 31 * deviation && degree < deviation:
@@ -94,7 +94,7 @@ extension UnitConvertibleProtocol {
 	- Parameter funit: The speed unit needs to be converted from
 	- Parameter tunit: The speed unit needs to be converted to
 	*/
-	func convert(value: Double, from funit: SpeedUnit, to tunit: SpeedUnit) -> Double {
+	public func convert(value: Double, from funit: SpeedUnit, to tunit: SpeedUnit) -> Double {
 		switch (funit, tunit) {
 		case (.mph, .kmph):
 			return value * 1.61
