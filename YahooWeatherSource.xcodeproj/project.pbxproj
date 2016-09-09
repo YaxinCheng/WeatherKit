@@ -10,6 +10,7 @@
 		E305F0431D73AA7100F055B4 /* DistanceUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E305F0421D73AA7100F055B4 /* DistanceUnit.swift */; };
 		E30A85611D7508500073EC44 /* DirectionUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30A85601D7508500073EC44 /* DirectionUnit.swift */; };
 		E30A85631D754E190073EC44 /* SpeedUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30A85621D754E190073EC44 /* SpeedUnit.swift */; };
+		E38EC2961D82D369002F662A /* UnitConvertibleProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38EC2951D82D369002F662A /* UnitConvertibleProtocol.swift */; };
 		E3CB86E91D66D02F00ABC10D /* YahooWeatherSource.h in Headers */ = {isa = PBXBuildFile; fileRef = E3CB86E81D66D02F00ABC10D /* YahooWeatherSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E3CB86F01D66D02F00ABC10D /* YahooWeatherSource.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3CB86E51D66D02F00ABC10D /* YahooWeatherSource.framework */; };
 		E3CB86F51D66D02F00ABC10D /* YahooWeatherSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CB86F41D66D02F00ABC10D /* YahooWeatherSourceTests.swift */; };
@@ -35,6 +36,7 @@
 		E305F0421D73AA7100F055B4 /* DistanceUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DistanceUnit.swift; sourceTree = "<group>"; };
 		E30A85601D7508500073EC44 /* DirectionUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DirectionUnit.swift; sourceTree = "<group>"; };
 		E30A85621D754E190073EC44 /* SpeedUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeedUnit.swift; sourceTree = "<group>"; };
+		E38EC2951D82D369002F662A /* UnitConvertibleProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnitConvertibleProtocol.swift; sourceTree = "<group>"; };
 		E3CB86E51D66D02F00ABC10D /* YahooWeatherSource.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = YahooWeatherSource.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3CB86E81D66D02F00ABC10D /* YahooWeatherSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YahooWeatherSource.h; sourceTree = "<group>"; };
 		E3CB86EA1D66D02F00ABC10D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -71,6 +73,7 @@
 		E30A85641D7681830073EC44 /* Unit Conversion */ = {
 			isa = PBXGroup;
 			children = (
+				E38EC2951D82D369002F662A /* UnitConvertibleProtocol.swift */,
 				E3CB87061D66D08700ABC10D /* TemperatureUnit.swift */,
 				E305F0421D73AA7100F055B4 /* DistanceUnit.swift */,
 				E30A85601D7508500073EC44 /* DirectionUnit.swift */,
@@ -230,6 +233,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E3CB87161D66F96800ABC10D /* CityLoader.swift in Sources */,
+				E38EC2961D82D369002F662A /* UnitConvertibleProtocol.swift in Sources */,
 				E3CB87951D6C150200ABC10D /* NSDateComponents+InitFromString.swift in Sources */,
 				E30A85631D754E190073EC44 /* SpeedUnit.swift in Sources */,
 				E3CB870F1D66D08700ABC10D /* TemperatureUnit.swift in Sources */,

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum TemperatureUnit {
+public enum TemperatureUnit: UnitConvertibleProtocol {
 	case fahrenheit
 	case celsius
 	
@@ -27,22 +27,5 @@ public enum TemperatureUnit {
 			internalJSON[eachKey] = convert((value[eachKey] as? Double) ?? -1, from: .fahrenheit, to: self)
 		}
 		return internalJSON
-	}
-	
-	/**
-	Convert a value from one temperature unit to another temperature unit
-	- Parameter value: A value needs to be converted
-	- Parameter funit: The unit needs to be converted from
-	- Parameter tunit: The unit needs to be converted to
-	*/
-	private func convert(value: Double, from funit: TemperatureUnit, to tunit: TemperatureUnit) -> Double {
-		switch (funit, tunit) {
-		case (.fahrenheit, .celsius):
-			return (value - 32) / 1.8
-		case (.celsius, .fahrenheit):
-			return value * 1.8 + 32
-		default:
-			return value
-		}
 	}
 }

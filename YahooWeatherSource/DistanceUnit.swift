@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum DistanceUnit {
+public enum DistanceUnit: UnitConvertibleProtocol {
 	case mi
 	case km
 	
@@ -25,20 +25,5 @@ public enum DistanceUnit {
 		return convertedJSON
 	}
 	
-	/**
-	Convert a value from one distance unit to another distance unit
-	- Parameter value: A value needs to be converted
-	- Parameter funit: The distance unit needs to be converted from
-	- Parameter tunit: The distance unit needs to be converted to
-	*/
-	private func convert(value value: Double, from funit: DistanceUnit, to tunit: DistanceUnit) -> Double {
-		switch (funit, tunit) {
-		case (.mi, .km):
-			return value * 1.61
-		case (.km, .mi):
-			return value / 1.61
-		default:
-			return value
-		}
-	}
+	
 }

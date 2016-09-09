@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum SpeedUnit {
+public enum SpeedUnit: UnitConvertibleProtocol {
 	case mph
 	case kmph
 	
@@ -24,21 +24,5 @@ public enum SpeedUnit {
 		convertedJSON[speedKey] = convertedSpeed
 		return convertedJSON
 	}
-	
-	/**
-	Convert a value from one distance unit to another speed unit
-	- Parameter value: A value needs to be converted
-	- Parameter funit: The speed unit needs to be converted from
-	- Parameter tunit: The speed unit needs to be converted to
-	*/
-	private func convert(value: Double, from funit: SpeedUnit, to tunit: SpeedUnit) -> Double {
-		switch (funit, tunit) {
-		case (mph, kmph):
-			return value * 1.61
-		case (kmph, mph):
-			return value / 1.61
-		default:
-			return value
-		}
-	}
+
 }
