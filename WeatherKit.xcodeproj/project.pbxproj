@@ -10,6 +10,16 @@
 		E38EC2BF1D82E01A002F662A /* WeatherKit.h in Headers */ = {isa = PBXBuildFile; fileRef = E38EC2BE1D82E01A002F662A /* WeatherKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E38EC2C61D82E01A002F662A /* WeatherKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E38EC2BB1D82E01A002F662A /* WeatherKit.framework */; };
 		E38EC2CB1D82E01A002F662A /* WeatherKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38EC2CA1D82E01A002F662A /* WeatherKitTests.swift */; };
+		E38EC2DF1D82E029002F662A /* CityLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38EC2D51D82E029002F662A /* CityLoader.swift */; };
+		E38EC2E01D82E029002F662A /* DirectionUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38EC2D61D82E029002F662A /* DirectionUnit.swift */; };
+		E38EC2E11D82E029002F662A /* DistanceUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38EC2D71D82E029002F662A /* DistanceUnit.swift */; };
+		E38EC2E21D82E029002F662A /* NSDateComponents+InitFromString.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38EC2D81D82E029002F662A /* NSDateComponents+InitFromString.swift */; };
+		E38EC2E31D82E029002F662A /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38EC2D91D82E029002F662A /* Result.swift */; };
+		E38EC2E41D82E029002F662A /* SpeedUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38EC2DA1D82E029002F662A /* SpeedUnit.swift */; };
+		E38EC2E51D82E029002F662A /* TemperatureUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38EC2DB1D82E029002F662A /* TemperatureUnit.swift */; };
+		E38EC2E61D82E029002F662A /* UnitConvertibleProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38EC2DC1D82E029002F662A /* UnitConvertibleProtocol.swift */; };
+		E38EC2E71D82E029002F662A /* WeatherSourceSQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38EC2DD1D82E029002F662A /* WeatherSourceSQL.swift */; };
+		E38EC2E81D82E029002F662A /* WeatherStation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38EC2DE1D82E029002F662A /* WeatherStation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +39,16 @@
 		E38EC2C51D82E01A002F662A /* WeatherKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WeatherKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E38EC2CA1D82E01A002F662A /* WeatherKitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherKitTests.swift; sourceTree = "<group>"; };
 		E38EC2CC1D82E01A002F662A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E38EC2D51D82E029002F662A /* CityLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CityLoader.swift; sourceTree = "<group>"; };
+		E38EC2D61D82E029002F662A /* DirectionUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DirectionUnit.swift; sourceTree = "<group>"; };
+		E38EC2D71D82E029002F662A /* DistanceUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DistanceUnit.swift; sourceTree = "<group>"; };
+		E38EC2D81D82E029002F662A /* NSDateComponents+InitFromString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSDateComponents+InitFromString.swift"; sourceTree = "<group>"; };
+		E38EC2D91D82E029002F662A /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
+		E38EC2DA1D82E029002F662A /* SpeedUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeedUnit.swift; sourceTree = "<group>"; };
+		E38EC2DB1D82E029002F662A /* TemperatureUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TemperatureUnit.swift; sourceTree = "<group>"; };
+		E38EC2DC1D82E029002F662A /* UnitConvertibleProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnitConvertibleProtocol.swift; sourceTree = "<group>"; };
+		E38EC2DD1D82E029002F662A /* WeatherSourceSQL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherSourceSQL.swift; sourceTree = "<group>"; };
+		E38EC2DE1D82E029002F662A /* WeatherStation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherStation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +92,16 @@
 			isa = PBXGroup;
 			children = (
 				E38EC2BE1D82E01A002F662A /* WeatherKit.h */,
+				E38EC2D51D82E029002F662A /* CityLoader.swift */,
+				E38EC2D61D82E029002F662A /* DirectionUnit.swift */,
+				E38EC2D71D82E029002F662A /* DistanceUnit.swift */,
+				E38EC2D81D82E029002F662A /* NSDateComponents+InitFromString.swift */,
+				E38EC2D91D82E029002F662A /* Result.swift */,
+				E38EC2DA1D82E029002F662A /* SpeedUnit.swift */,
+				E38EC2DB1D82E029002F662A /* TemperatureUnit.swift */,
+				E38EC2DC1D82E029002F662A /* UnitConvertibleProtocol.swift */,
+				E38EC2DD1D82E029002F662A /* WeatherSourceSQL.swift */,
+				E38EC2DE1D82E029002F662A /* WeatherStation.swift */,
 				E38EC2C01D82E01A002F662A /* Info.plist */,
 			);
 			path = WeatherKit;
@@ -194,6 +224,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E38EC2DF1D82E029002F662A /* CityLoader.swift in Sources */,
+				E38EC2E41D82E029002F662A /* SpeedUnit.swift in Sources */,
+				E38EC2E31D82E029002F662A /* Result.swift in Sources */,
+				E38EC2E01D82E029002F662A /* DirectionUnit.swift in Sources */,
+				E38EC2E11D82E029002F662A /* DistanceUnit.swift in Sources */,
+				E38EC2E21D82E029002F662A /* NSDateComponents+InitFromString.swift in Sources */,
+				E38EC2E51D82E029002F662A /* TemperatureUnit.swift in Sources */,
+				E38EC2E71D82E029002F662A /* WeatherSourceSQL.swift in Sources */,
+				E38EC2E61D82E029002F662A /* UnitConvertibleProtocol.swift in Sources */,
+				E38EC2E81D82E029002F662A /* WeatherStation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -310,6 +350,7 @@
 		E38EC2D01D82E01A002F662A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -320,12 +361,14 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.guofeng.Ych.WeatherKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
 		E38EC2D11D82E01A002F662A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
