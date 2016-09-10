@@ -108,23 +108,20 @@ class WeatherKitTests: XCTestCase {
 	func testDaynight() {
 		let expectation = expectationWithDescription("cityDaytime")
 		let cityLoader = CityLoader()
-		cityLoader.daytime(for: halifaxJSON) {
-			guard
-				let city = $0,
-				let _ = city["sunrise"],
-				let _ = city["sunset"]
-				else {
-					XCTFail()
-					return
+		cityLoader.dayNight(woeid: "4177") {
+			if $0 != nil && $1 != nil {
+				expectation.fulfill()
+			} else {
+				XCTFail()
 			}
-			expectation.fulfill()
 		}
 		waitForExpectationsWithTimeout(5, handler: failBlock)
 	}
 	
 	func testParseLocation() {
 		let expectation = expectationWithDescription("locationParse")
-		weatherSource.locationParse(location: halifaxLocation) {
+		let cityLoader = CityLoader()
+		cityLoader.locationParse(location: halifaxLocation) {
 			assert($0 != nil)
 			assert($0!["name"] is String)
 			assert($0!["name"] as! String == "Halifax")

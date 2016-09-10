@@ -1,5 +1,5 @@
 //
-//  YahooWeatherSource.swift
+//  WeatherStation.swift
 //  Weather
 //
 //  Created by Yaxin Cheng on 2016-08-12.
@@ -115,7 +115,8 @@ public struct WeatherStation {
 		Result can contain a generic type or an ErrorType
 	*/
 	public func weather(location location: CLLocation, complete: (Result<Dictionary<String, AnyObject>>) -> Void) {
-		locationParse(location: location) {
+		let cityLoader = CityLoader()
+		cityLoader.locationParse(location: location) {
 			guard let city = $0 else {
 				let errorResult = Result<Dictionary<String, AnyObject>>(error: YahooWeatherError.FailedFindingCity)
 				complete(errorResult)
@@ -123,46 +124,6 @@ public struct WeatherStation {
 			}
 			dispatch_async(self.queue) {
 				self.loadWeatherData(woeid: city["woeid"] as! String, complete: complete)
-			}
-		}
-	}
-	
-	/**
-	Parse a CLLocation to string information of city, province, country
-	- Parameter location:
-		Location needs to be parsed
-	- Parameter complete:
-		A delegate method used to call at the end of the function.
-		Result can contain a generic type or an ErrorType
-	*/
-	public func locationParse(location location: CLLocation, complete: (Dictionary<String, AnyObject>?) -> Void) {
-		let geoCoder = CLGeocoder()
-		dispatch_async(queue) {
-			geoCoder.reverseGeocodeLocation(location) { (placeMarks, error) in
-				if error != nil {
-					dispatch_async(dispatch_get_main_queue()) {
-						complete(nil)
-					}
-				} else {
-					guard
-						let mark = placeMarks?.first,
-						let state = mark.addressDictionary?["State"] as? String,
-						let country = mark.addressDictionary?["Country"] as? String,
-						let city = mark.addressDictionary?["City"] as? String
-					else {
-							dispatch_async(dispatch_get_main_queue()) {
-								complete(nil)
-							}
-							return
-					}
-					dispatch_sync(self.queue) {
-						let loader = CityLoader()
-						loader.loadCity(city: city, province: state, country: country) {
-							guard let matchedCity = $0.first else { return }
-							complete(matchedCity)
-						}
-					}
-				}
 			}
 		}
 	}
@@ -203,7 +164,8 @@ public struct WeatherStation {
 		Result can contain a generic type or an ErrorType
 	*/
 	public func forecast(location location: CLLocation, complete: (Result<[Dictionary<String, AnyObject>]> -> Void)) {
-		locationParse(location: location) {
+		let cityLoader = CityLoader()
+		cityLoader.locationParse(location: location) {
 			guard let city = $0 else {
 				let errorResult = Result<[Dictionary<String, AnyObject>]>(error: YahooWeatherError.FailedFindingCity)
 				complete(errorResult)
@@ -309,11 +271,12 @@ public struct WeatherStation {
 		var newJSON = Dictionary<String, AnyObject>()
 		newJSON["temperature"] = ((json["item"]?["condition"] as? Dictionary<String, AnyObject>)?["temp"] as? NSString)?.doubleValue
 		newJSON["condition"] = (json["item"]?["condition"] as? Dictionary<String, AnyObject>)?["text"]
+		newJSON["conditionCode"] = ((json["item"]?["condition"] as? Dictionary<String, AnyObject>)?["code"] as? NSString)?.integerValue
 		newJSON["windChill"] = (json["wind"]?["chill"] as? NSString)?.doubleValue
 		newJSON["windSpeed"] = (json["wind"]?["speed"] as? NSString)?.doubleValue
 		newJSON["windDirection"] = json["wind"]?["direction"]
 		newJSON["humidity"] = json["atmosphere"]?["humidity"]
-		newJSON["visibility"] = json["atmosphere"]?["visibility"]
+		newJSON["visibility"] = (json["atmosphere"]?["visibility"] as? NSString)?.doubleValue
 		newJSON["pressure"] = json["atmosphere"]?["pressure"]
 		newJSON["trend"] = (json["atmosphere"]?["rising"] as? Int) == 0 ? "Falling" : "Rising"
 		newJSON["sunrise"] = NSDateComponents(from: (json["astronomy"]?["sunrise"] as? String) ?? "")

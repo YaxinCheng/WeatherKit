@@ -8,9 +8,10 @@
 
 import Foundation
 
-public enum DirectionUnit: UnitConvertibleProtocol {
+public enum DirectionUnit: WeatherUnitProtocol {
 	case degree
 	case direction
+	public typealias ValueType = String
 	
 	/**
 	Convert distance unit in weather json or forecast json
@@ -29,7 +30,7 @@ public enum DirectionUnit: UnitConvertibleProtocol {
 			windDegree = windDirection
 		}
 		
-		let degree = convert(degree: windDegree)
+		let degree = convert(windDegree, from: self, to: DirectionUnit.direction)
 		var convertedJSON = value
 		convertedJSON[directionKey] = degree
 		return convertedJSON

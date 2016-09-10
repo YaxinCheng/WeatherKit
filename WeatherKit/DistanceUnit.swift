@@ -8,10 +8,10 @@
 
 import Foundation
 
-public enum DistanceUnit: UnitConvertibleProtocol {
+public enum DistanceUnit: WeatherUnitProtocol {
 	case mi
 	case km
-	
+	public typealias ValueType = Double
 	/**
 	Convert distance unit in weather json or forecast json
 	- Parameter value: json needs to be converted
@@ -20,10 +20,8 @@ public enum DistanceUnit: UnitConvertibleProtocol {
 		let distanceKey = "visibility"
 		guard self == .km, let visibility = value[distanceKey] as? Double else { return value }
 		var convertedJSON = value
-		let convertedVisibility = convert(value: visibility, from: .mi, to: .km)
+		let convertedVisibility = convert(visibility, from: DistanceUnit.mi, to: DistanceUnit.km)
 		convertedJSON[distanceKey] = convertedVisibility
 		return convertedJSON
 	}
-	
-	
 }

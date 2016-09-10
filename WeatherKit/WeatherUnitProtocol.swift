@@ -1,24 +1,46 @@
 //
-//  UnitConvertibleProtocol.swift
+//  WeatherUnitProtocol.swift
 //  WeatherKit
 //
-//  Created by Yaxin Cheng on 2016-09-09.
+//  Created by Yaxin Cheng on 2016-09-10.
 //  Copyright © 2016 Yaxin Cheng. All rights reserved.
 //
 
 import Foundation
 
-public protocol UnitConvertibleProtocol {
+protocol WeatherUnitProtocol {
+	associatedtype ValueType
+	func convert(value: Double, from funit: Self, to tunit: Self) -> ValueType
 }
 
-extension UnitConvertibleProtocol {
+extension WeatherUnitProtocol {
+	/**
+	An open access for unit conversion functions
+	- Parameter value: A value needs to be converted
+	- Parameter funit: The unit needs to be converted from
+	- Parameter tunit: The unit needs to be converted to
+	*/
+	func convert(value: Double, from funit: Self, to tunit: Self) -> ValueType {
+		switch funit.self {
+		case is TemperatureUnit:
+			return convertValue(value, from: funit as! TemperatureUnit, to: tunit as! TemperatureUnit) as! ValueType
+		case is DistanceUnit:
+			return convertValue(value, from: funit as! DistanceUnit, to: tunit as! DistanceUnit) as! ValueType
+		case is SpeedUnit:
+			return convertValue(value, from: funit as! SpeedUnit, to: tunit as! SpeedUnit) as! ValueType
+		case is DirectionUnit:
+			return convertValue(value, from: funit as! DirectionUnit, to: tunit as! DirectionUnit) as! ValueType
+		default:
+			fatalError()
+		}
+	}
 	/**
 	Convert a value from one temperature unit to another temperature unit
 	- Parameter value: A value needs to be converted
 	- Parameter funit: The unit needs to be converted from
 	- Parameter tunit: The unit needs to be converted to
 	*/
-	public func convert(value: Double, from funit: TemperatureUnit, to tunit: TemperatureUnit) -> Double {
+	private func convertValue(value: Double, from funit: TemperatureUnit, to tunit: TemperatureUnit) -> Double {
 		switch (funit, tunit) {
 		case (.fahrenheit, .celsius):
 			return (value - 32) / 1.8
@@ -35,7 +57,7 @@ extension UnitConvertibleProtocol {
 	- Parameter funit: The distance unit needs to be converted from
 	- Parameter tunit: The distance unit needs to be converted to
 	*/
-	public func convert(value value: Double, from funit: DistanceUnit, to tunit: DistanceUnit) -> Double {
+	private func convertValue(value: Double, from funit: DistanceUnit, to tunit: DistanceUnit) -> Double {
 		switch (funit, tunit) {
 		case (.mi, .km):
 			return value * 1.61
@@ -47,10 +69,29 @@ extension UnitConvertibleProtocol {
 	}
 	
 	/**
+	Convert a value from one distance unit to another speed unit
+	- Parameter value: A value needs to be converted
+	- Parameter funit: The speed unit needs to be converted from
+	- Parameter tunit: The speed unit needs to be converted to
+	*/
+	private func convertValue(value: Double, from funit: SpeedUnit, to tunit: SpeedUnit) -> Double {
+		switch (funit, tunit) {
+		case (.mph, .kmph):
+			return value * 1.61
+		case (.kmph, .mph):
+			return value / 1.61
+		default:
+			return value
+		}
+	}
+	
+	/**
 	Convert a value from one distance unit to another direction unit
 	- Parameter windDegree: The wind degree needs to be converted
 	*/
-	public func convert(degree windDegree: Double) -> String {
+	private func convertValue(windDegree: Double, from funit: DirectionUnit, to tunit: DirectionUnit) -> String {
+		guard funit != tunit else { return "\(windDegree)" }
+		guard funit != .direction || tunit != .degree else { return "Unable to load" }
 		let deviation = 11.25
 		switch windDegree {
 		case let degree where degree >= 31 * deviation && degree < deviation:
@@ -87,21 +128,5 @@ extension UnitConvertibleProtocol {
 			return "NNW"
 		}
 	}
-	
-	/**
-	Convert a value from one distance unit to another speed unit
-	- Parameter value: A value needs to be converted
-	- Parameter funit: The speed unit needs to be converted from
-	- Parameter tunit: The speed unit needs to be converted to
-	*/
-	public func convert(value: Double, from funit: SpeedUnit, to tunit: SpeedUnit) -> Double {
-		switch (funit, tunit) {
-		case (.mph, .kmph):
-			return value * 1.61
-		case (.kmph, .mph):
-			return value / 1.61
-		default:
-			return value
-		}
-	}
+
 }

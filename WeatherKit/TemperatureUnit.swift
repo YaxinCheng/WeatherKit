@@ -8,10 +8,10 @@
 
 import Foundation
 
-public enum TemperatureUnit: UnitConvertibleProtocol {
+public enum TemperatureUnit: WeatherUnitProtocol {
 	case fahrenheit
 	case celsius
-	
+	public typealias ValueType = Double
 	/**
 	Convert temperature unit in weather json or forecast json
 	- Parameter value: json needs to be converted
@@ -24,7 +24,7 @@ public enum TemperatureUnit: UnitConvertibleProtocol {
 		let weatherMode = value["temperature"] is Double
 		let tempKeys = weatherMode ? ["temperature", "windChill"] : ["high", "low"]
 		for eachKey in tempKeys {
-			internalJSON[eachKey] = convert((value[eachKey] as? Double) ?? -1, from: .fahrenheit, to: self)
+			internalJSON[eachKey] = convert((value[eachKey] as? Double) ?? -1, from: TemperatureUnit.fahrenheit, to: self)
 		}
 		return internalJSON
 	}

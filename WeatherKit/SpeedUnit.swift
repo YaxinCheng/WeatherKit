@@ -8,10 +8,10 @@
 
 import Foundation
 
-public enum SpeedUnit: UnitConvertibleProtocol {
+public enum SpeedUnit: WeatherUnitProtocol {
 	case mph
 	case kmph
-	
+	public typealias ValueType = Double
 	/**
 	Convert distance unit in weather json or forecast json
 	- Parameter value: json needs to be converted

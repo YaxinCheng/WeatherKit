@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreLocation.CLLocation
 
 public struct CityLoader {
 	
@@ -88,33 +89,6 @@ public struct CityLoader {
 			}
 		}
 	}
-
-	/**
-	Loads and updates the sunrise and sunset time of a city json
-	- Parameter city: A json contains all the city information that needs to be updated
-	- Parameter complete:
-		A delegate method used to call at the end of the function.
-		An updated city json will be past to the complete
-		
-		Once an error happened or no city is found from this woeid, a nil will be past to the complete
-	*/
-	public func daytime(for city: Dictionary<String, AnyObject>, complete: (Dictionary<String, AnyObject>?) -> Void) {
-		dispatch_async(queue) {
-			guard let woeid = city["woeid"] as? String else { return }
-			self.updateTime(woeid: woeid) {
-				guard $0 != nil && $1 != nil else {
-					dispatch_async(dispatch_get_main_queue()) {
-						complete(nil)
-					}
-					return
-				}
-				var cityDictionary: Dictionary<String, AnyObject> = city
-				cityDictionary["sunrise"] = $0
-				cityDictionary["sunset"] = $1
-				complete(cityDictionary)
-			}
-		}
-	}
 	
 	/**
 	Update the sunrise and sunset time by the WOEID
@@ -125,7 +99,7 @@ public struct CityLoader {
 		
 		Once an error happened or no such city is found by the WOEID, two nils will be past
 	*/
-	public func updateTime(woeid woeid: String, complete: (sunrise: NSDateComponents?, sunset: NSDateComponents?) -> Void) {
+	public func dayNight(woeid woeid: String, complete: (sunrise: NSDateComponents?, sunset: NSDateComponents?) -> Void) {
 		dispatch_async(queue) {
 			let baseSQL: WeatherSourceSQL = .daytime
 			baseSQL.execute(information: woeid) { (result) in
@@ -148,6 +122,46 @@ public struct CityLoader {
 					}
 				case .Failure(_):
 					complete(sunrise: nil, sunset: nil)
+				}
+			}
+		}
+	}
+	
+	/**
+	Parse a CLLocation to string information of city, province, country
+	- Parameter location:
+	Location needs to be parsed
+	- Parameter complete:
+	A delegate method used to call at the end of the function.
+	Result can contain a generic type or an ErrorType
+	*/
+	public func locationParse(location location: CLLocation, complete: (Dictionary<String, AnyObject>?) -> Void) {
+		let geoCoder = CLGeocoder()
+		dispatch_async(queue) {
+			geoCoder.reverseGeocodeLocation(location) { (placeMarks, error) in
+				if error != nil {
+					dispatch_async(dispatch_get_main_queue()) {
+						complete(nil)
+					}
+				} else {
+					guard
+						let mark = placeMarks?.first,
+						let state = mark.addressDictionary?["State"] as? String,
+						let country = mark.addressDictionary?["Country"] as? String,
+						let city = mark.addressDictionary?["City"] as? String
+						else {
+							dispatch_async(dispatch_get_main_queue()) {
+								complete(nil)
+							}
+							return
+					}
+					dispatch_sync(self.queue) {
+						let loader = CityLoader()
+						loader.loadCity(city: city, province: state, country: country) {
+							guard let matchedCity = $0.first else { return }
+							complete(matchedCity)
+						}
+					}
 				}
 			}
 		}
