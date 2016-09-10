@@ -125,6 +125,8 @@ forecastJSON["high"] // Double value about the highest temperature
 forecastJSON["low"] // Double value about the lowest temperature
 forecastJSON["date"] // String value about the forecast date
 forecastJSON["text"] // String value about the forecast condition
+forecastJSON["day"] // String value about the weekday the forecast is for
+forecastJSON["code"] // String value about the weather condition code
 ```
 
 #### Cache clear:
