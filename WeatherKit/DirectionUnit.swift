@@ -30,7 +30,7 @@ public enum DirectionUnit: WeatherUnitProtocol {
 			windDegree = windDirection
 		}
 		
-		let degree = convert(windDegree, from: self, to: DirectionUnit.direction)
+		let degree = convert(windDegree, from: DirectionUnit.degree, to: DirectionUnit.direction)
 		var convertedJSON = value
 		convertedJSON[directionKey] = degree
 		return convertedJSON
