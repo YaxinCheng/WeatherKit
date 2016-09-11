@@ -28,4 +28,8 @@ public enum TemperatureUnit: WeatherUnitProtocol {
 		}
 		return internalJSON
 	}
+	
+	public var description: String {
+		return self == .celsius ? "°C" : "°F"
+	}
 }

@@ -24,5 +24,8 @@ public enum SpeedUnit: WeatherUnitProtocol {
 		convertedJSON[speedKey] = convertedSpeed
 		return convertedJSON
 	}
-
+	
+	public var description: String {
+		return self == .mph ? "MPH" : "KMPH"
+	}
 }

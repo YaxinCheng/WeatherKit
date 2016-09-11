@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol WeatherUnitProtocol {
+protocol WeatherUnitProtocol: CustomStringConvertible {
 	associatedtype ValueType
 	func convert(value: Double, from funit: Self, to tunit: Self) -> ValueType
 }

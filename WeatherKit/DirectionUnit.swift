@@ -35,4 +35,8 @@ public enum DirectionUnit: WeatherUnitProtocol {
 		convertedJSON[directionKey] = degree
 		return convertedJSON
 	}
+	
+	public var description: String {
+		return self == .degree ? "°" : ""
+	}
 }

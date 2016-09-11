@@ -24,4 +24,8 @@ public enum DistanceUnit: WeatherUnitProtocol {
 		convertedJSON[distanceKey] = convertedVisibility
 		return convertedJSON
 	}
+	
+	public var description: String {
+		return self == .mi ? "MI" : "KM"
+	}
 }
