@@ -17,28 +17,28 @@ public struct WeatherStation {
 	
 	Options: Fahrenheit or Celsius
 	*/
-	var temperatureUnit: TemperatureUnit
+	public var temperatureUnit: TemperatureUnit
 	
 	/**
 	Distance unit for weather
 	
 	Options: Meters or Kilometers
 	*/
-	var distanceUnit: DistanceUnit
+	public var distanceUnit: DistanceUnit
 
 	/**
 	Direction unit for weather
 	
 	Options: Degrees or Compass Direction
 	*/
-	var directionUnit: DirectionUnit
+	public var directionUnit: DirectionUnit
 	
 	/**
 	Speed unit for weather
 	
 	Options: Meters/hour or Kilometers/hour
 	*/
-	var speedUnit: SpeedUnit
+	public var speedUnit: SpeedUnit
 	
 	/**
 	Constructs a new weather source object with related units
