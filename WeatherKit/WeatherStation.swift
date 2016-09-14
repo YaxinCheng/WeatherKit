@@ -10,8 +10,8 @@ import Foundation
 import CoreLocation.CLLocation
 
 public struct WeatherStation {
-	fileprivate let queue: DispatchQueue// Async queue
-	fileprivate let cache: URLCache// URL Cache
+	private let queue: DispatchQueue// Async queue
+	private let cache: URLCache// URL Cache
 	/**
 	Temeperature unit for weather and forecasts
 	
@@ -186,7 +186,7 @@ public struct WeatherStation {
 		A delegate method used to call at the end of the function.
 		Result can contain a generic type or an ErrorType
 	*/
-	fileprivate func loadWeatherData(woeid: String, complete: @escaping (Result<Dictionary<String, AnyObject>>) -> Void) {
+	private func loadWeatherData(woeid: String, complete: @escaping (Result<Dictionary<String, AnyObject>>) -> Void) {
 		let baseSQL:WeatherSourceSQL = .weather
 		typealias JSON = Dictionary<String, AnyObject>
 		queue.async {
@@ -228,7 +228,7 @@ public struct WeatherStation {
 	A delegate method used to call at the end of the function.
 	Result can contain a generic type or an ErrorType
 	*/
-	fileprivate func loadForecasts(woeid: String, complete: @escaping (Result<[Dictionary<String, AnyObject>]>) -> Void) {
+	private func loadForecasts(woeid: String, complete: @escaping (Result<[Dictionary<String, AnyObject>]>) -> Void) {
 		let baseSQL:WeatherSourceSQL = .forecast
 		typealias JSON = Dictionary<String, AnyObject>
 		queue.async {
@@ -267,7 +267,7 @@ public struct WeatherStation {
 	- returns:
 		A newly packed json
 	*/
-	fileprivate func formatWeatherJSON(_ json: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
+	private func formatWeatherJSON(_ json: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
 		var newJSON = Dictionary<String, AnyObject>()
 		newJSON["temperature"] = ((json["item"]?["condition"] as? Dictionary<String, AnyObject>)?["temp"] as? NSString)?.doubleValue as AnyObject?
 		newJSON["condition"] = (json["item"]?["condition"] as? Dictionary<String, AnyObject>)?["text"]
@@ -294,7 +294,7 @@ public struct WeatherStation {
 	- returns:
 	A newly packed json
 	*/
-	fileprivate func formatForecastJSON(_ json: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
+	private func formatForecastJSON(_ json: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
 		var newJSON = json
 		newJSON["high"] = (json["high"] as? NSString)?.doubleValue as AnyObject?
 		newJSON["low"] = (json["low"] as? NSString)?.doubleValue as AnyObject?
