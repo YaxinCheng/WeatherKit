@@ -68,8 +68,8 @@ public struct WeatherStation {
 		
 		Meters/hour by default
 	*/
-	public init(temperatureUnit tunit: TemperatureUnit = .celsius, distanceUnit: DistanceUnit = .mi, directionUnit: DirectionUnit = .direction, speedUnit: SpeedUnit = .mph) {
-		self.temperatureUnit = tunit
+	public init(temperatureUnit: TemperatureUnit = .celsius, distanceUnit: DistanceUnit = .mi, directionUnit: DirectionUnit = .direction, speedUnit: SpeedUnit = .mph) {
+		self.temperatureUnit = temperatureUnit
 		self.distanceUnit = distanceUnit
 		self.directionUnit = directionUnit
 		self.speedUnit = speedUnit

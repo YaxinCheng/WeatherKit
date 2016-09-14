@@ -28,11 +28,11 @@ public struct CityLoader {
 		A delegate method used to call at the end of the function.
 		An array of JSON will be past to the complete
 	*/
-	public func loadCity(city cityName: String, province: String = "", country: String = "", complete: @escaping ([Dictionary<String, AnyObject>]) -> Void) {
+	public func loadCity(city: String, province: String = "", country: String = "", complete: @escaping ([Dictionary<String, AnyObject>]) -> Void) {
 		typealias JSON = Dictionary<String, AnyObject>
 		queue.async {
 			let baseSQL: WeatherSourceSQL = .cityFromName
-			baseSQL.execute(information: cityName + ", " + province + ", " + country) { result in
+			baseSQL.execute(information: city + ", " + province + ", " + country) { result in
 				switch result {
 				case .success(let citiesJSON):
 					let unwrapped: [JSON]
