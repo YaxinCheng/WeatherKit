@@ -10,7 +10,7 @@ import Foundation
 
 protocol WeatherUnitProtocol: CustomStringConvertible {
 	associatedtype ValueType
-	func convert(value: Double, from funit: Self, to tunit: Self) -> ValueType
+	func convert(_ value: Double, from funit: Self, to tunit: Self) -> ValueType
 }
 
 extension WeatherUnitProtocol {
@@ -20,7 +20,7 @@ extension WeatherUnitProtocol {
 	- Parameter funit: The unit needs to be converted from
 	- Parameter tunit: The unit needs to be converted to
 	*/
-	func convert(value: Double, from funit: Self, to tunit: Self) -> ValueType {
+	func convert(_ value: Double, from funit: Self, to tunit: Self) -> ValueType {
 		switch funit.self {
 		case is TemperatureUnit:
 			return convertValue(value, from: funit as! TemperatureUnit, to: tunit as! TemperatureUnit) as! ValueType
@@ -40,7 +40,7 @@ extension WeatherUnitProtocol {
 	- Parameter funit: The unit needs to be converted from
 	- Parameter tunit: The unit needs to be converted to
 	*/
-	private func convertValue(value: Double, from funit: TemperatureUnit, to tunit: TemperatureUnit) -> Double {
+	private func convertValue(_ value: Double, from funit: TemperatureUnit, to tunit: TemperatureUnit) -> Double {
 		switch (funit, tunit) {
 		case (.fahrenheit, .celsius):
 			return (value - 32) / 1.8
@@ -57,7 +57,7 @@ extension WeatherUnitProtocol {
 	- Parameter funit: The distance unit needs to be converted from
 	- Parameter tunit: The distance unit needs to be converted to
 	*/
-	private func convertValue(value: Double, from funit: DistanceUnit, to tunit: DistanceUnit) -> Double {
+	private func convertValue(_ value: Double, from funit: DistanceUnit, to tunit: DistanceUnit) -> Double {
 		switch (funit, tunit) {
 		case (.mi, .km):
 			return value * 1.61
@@ -74,7 +74,7 @@ extension WeatherUnitProtocol {
 	- Parameter funit: The speed unit needs to be converted from
 	- Parameter tunit: The speed unit needs to be converted to
 	*/
-	private func convertValue(value: Double, from funit: SpeedUnit, to tunit: SpeedUnit) -> Double {
+	private func convertValue(_ value: Double, from funit: SpeedUnit, to tunit: SpeedUnit) -> Double {
 		switch (funit, tunit) {
 		case (.mph, .kmph):
 			return value * 1.61
@@ -89,7 +89,7 @@ extension WeatherUnitProtocol {
 	Convert a value from one distance unit to another direction unit
 	- Parameter windDegree: The wind degree needs to be converted
 	*/
-	private func convertValue(windDegree: Double, from funit: DirectionUnit, to tunit: DirectionUnit) -> String {
+	private func convertValue(_ windDegree: Double, from funit: DirectionUnit, to tunit: DirectionUnit) -> String {
 		guard funit != tunit else { return "\(windDegree)" }
 		guard funit != .direction || tunit != .degree else { return "Unable to load" }
 		let deviation = 11.25

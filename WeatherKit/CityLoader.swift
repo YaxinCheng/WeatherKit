@@ -11,12 +11,12 @@ import CoreLocation.CLLocation
 
 public struct CityLoader {
 	
-	let queue: dispatch_queue_t// Async queue
+	let queue: DispatchQueue// Async queue
 	/**
 	Construct a new city loader object
 	*/
 	public init() {
-		queue = dispatch_queue_create("CityLoaderQueue", nil)
+		queue = DispatchQueue(label: "CityLoaderQueue", attributes: [])
 	}
 	
 	/**
@@ -28,28 +28,28 @@ public struct CityLoader {
 		A delegate method used to call at the end of the function.
 		An array of JSON will be past to the complete
 	*/
-	public func loadCity(city cityName: String, province: String = "", country: String = "", complete: ([Dictionary<String, AnyObject>]) -> Void) {
+	public func loadCity(city cityName: String, province: String = "", country: String = "", complete: @escaping ([Dictionary<String, AnyObject>]) -> Void) {
 		typealias JSON = Dictionary<String, AnyObject>
-		dispatch_async(queue) {
+		queue.async {
 			let baseSQL: WeatherSourceSQL = .cityFromName
 			baseSQL.execute(information: cityName + ", " + province + ", " + country) { result in
 				switch result {
-				case .Success(let citiesJSON):
+				case .success(let citiesJSON):
 					let unwrapped: [JSON]
 					if let places = (citiesJSON["query"]?["results"] as? JSON)?["place"] as? [JSON] {
 						unwrapped = places
 					} else if let place = (citiesJSON["query"]?["results"] as? JSON)?["place"] as? JSON {
 						unwrapped = [place]
 					} else {
-						dispatch_async(dispatch_get_main_queue()) {
+						DispatchQueue.main.async {
 							complete([])
 						}
 						return
 					}
-					dispatch_async(dispatch_get_main_queue()) {
+					DispatchQueue.main.async {
 						complete(unwrapped)
 					}
-				case .Failure(_):
+				case .failure(_):
 					complete([])
 				}
 			}
@@ -67,23 +67,23 @@ public struct CityLoader {
 		
 		Once an error happened or no city is found from this woeid, a nil will be past to the complete
 	*/
-	public func loadCity(woeid woeid: String, complete: (Dictionary<String, AnyObject>?) -> Void) {
+	public func loadCity(woeid: String, complete: @escaping (Dictionary<String, AnyObject>?) -> Void) {
 		typealias JSON = Dictionary<String, AnyObject>
-		dispatch_async(queue) {
+		queue.async {
 			let baseSQL: WeatherSourceSQL = .cityFromWoeid
 			baseSQL.execute(information: woeid) { (result) in
 				switch result {
-				case .Success(let json):
+				case .success(let json):
 					guard let unwrapped = (json["query"]?["results"] as? JSON)?["place"] as? JSON else {
-						dispatch_async(dispatch_get_main_queue()) {
+						DispatchQueue.main.async {
 							complete(nil)
 						}
 						return
 					}
-					dispatch_async(dispatch_get_main_queue()) {
+					DispatchQueue.main.async {
 						complete(unwrapped)
 					}
-				case .Failure(_):
+				case .failure(_):
 					complete(nil)
 				}
 			}
@@ -99,29 +99,29 @@ public struct CityLoader {
 		
 		Once an error happened or no such city is found by the WOEID, two nils will be past
 	*/
-	public func dayNight(woeid woeid: String, complete: (sunrise: NSDateComponents?, sunset: NSDateComponents?) -> Void) {
-		dispatch_async(queue) {
+	public func dayNight(woeid: String, complete: @escaping (_ sunrise: DateComponents?, _ sunset: DateComponents?) -> Void) {
+		queue.async {
 			let baseSQL: WeatherSourceSQL = .daytime
 			baseSQL.execute(information: woeid) { (result) in
 				switch result {
-				case .Success(let daytimeJSON):
+				case .success(let daytimeJSON):
 					guard
 						let unwrapped = (daytimeJSON["query"]?["results"] as? Dictionary<String, AnyObject>)?["channel"]?["astronomy"] as? Dictionary<String, AnyObject>,
 						let sunriseString = unwrapped["sunrise"] as? String,
-						let sunrise = NSDateComponents(from: sunriseString),
+						let sunrise = DateComponents(from: sunriseString),
 						let sunsetString = unwrapped["sunset"] as? String,
-						let sunset = NSDateComponents(from: sunsetString)
+						let sunset = DateComponents(from: sunsetString)
 						else {
-							dispatch_async(dispatch_get_main_queue()) {
-								complete(sunrise: nil, sunset: nil)
+							DispatchQueue.main.async {
+								complete(nil, nil)
 							}
 							return
 					}
-					dispatch_async(dispatch_get_main_queue()) {
-						complete(sunrise: sunrise, sunset: sunset)
+					DispatchQueue.main.async {
+						complete(sunrise, sunset)
 					}
-				case .Failure(_):
-					complete(sunrise: nil, sunset: nil)
+				case .failure(_):
+					complete(nil, nil)
 				}
 			}
 		}
@@ -135,12 +135,12 @@ public struct CityLoader {
 	A delegate method used to call at the end of the function.
 	Result can contain a generic type or an ErrorType
 	*/
-	public func locationParse(location location: CLLocation, complete: (Dictionary<String, AnyObject>?) -> Void) {
+	public func locationParse(location: CLLocation, complete: @escaping (Dictionary<String, AnyObject>?) -> Void) {
 		let geoCoder = CLGeocoder()
-		dispatch_async(queue) {
+		queue.async {
 			geoCoder.reverseGeocodeLocation(location) { (placeMarks, error) in
 				if error != nil {
-					dispatch_async(dispatch_get_main_queue()) {
+					DispatchQueue.main.async {
 						complete(nil)
 					}
 				} else {
@@ -150,12 +150,12 @@ public struct CityLoader {
 						let country = mark.addressDictionary?["Country"] as? String,
 						let city = mark.addressDictionary?["City"] as? String
 						else {
-							dispatch_async(dispatch_get_main_queue()) {
+							DispatchQueue.main.async {
 								complete(nil)
 							}
 							return
 					}
-					dispatch_sync(self.queue) {
+					self.queue.sync {
 						let loader = CityLoader()
 						loader.loadCity(city: city, province: state, country: country) {
 							guard let matchedCity = $0.first else { return }

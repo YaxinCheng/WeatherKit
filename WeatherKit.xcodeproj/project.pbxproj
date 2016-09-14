@@ -13,7 +13,7 @@
 		E38EC2DF1D82E029002F662A /* CityLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38EC2D51D82E029002F662A /* CityLoader.swift */; };
 		E38EC2E01D82E029002F662A /* DirectionUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38EC2D61D82E029002F662A /* DirectionUnit.swift */; };
 		E38EC2E11D82E029002F662A /* DistanceUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38EC2D71D82E029002F662A /* DistanceUnit.swift */; };
-		E38EC2E21D82E029002F662A /* NSDateComponents+InitFromString.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38EC2D81D82E029002F662A /* NSDateComponents+InitFromString.swift */; };
+		E38EC2E21D82E029002F662A /* DateComponents+InitFromString.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38EC2D81D82E029002F662A /* DateComponents+InitFromString.swift */; };
 		E38EC2E31D82E029002F662A /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38EC2D91D82E029002F662A /* Result.swift */; };
 		E38EC2E41D82E029002F662A /* SpeedUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38EC2DA1D82E029002F662A /* SpeedUnit.swift */; };
 		E38EC2E51D82E029002F662A /* TemperatureUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38EC2DB1D82E029002F662A /* TemperatureUnit.swift */; };
@@ -42,7 +42,7 @@
 		E38EC2D51D82E029002F662A /* CityLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CityLoader.swift; sourceTree = "<group>"; };
 		E38EC2D61D82E029002F662A /* DirectionUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DirectionUnit.swift; sourceTree = "<group>"; };
 		E38EC2D71D82E029002F662A /* DistanceUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DistanceUnit.swift; sourceTree = "<group>"; };
-		E38EC2D81D82E029002F662A /* NSDateComponents+InitFromString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSDateComponents+InitFromString.swift"; sourceTree = "<group>"; };
+		E38EC2D81D82E029002F662A /* DateComponents+InitFromString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DateComponents+InitFromString.swift"; sourceTree = "<group>"; };
 		E38EC2D91D82E029002F662A /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 		E38EC2DA1D82E029002F662A /* SpeedUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeedUnit.swift; sourceTree = "<group>"; };
 		E38EC2DB1D82E029002F662A /* TemperatureUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TemperatureUnit.swift; sourceTree = "<group>"; };
@@ -95,7 +95,7 @@
 				E38EC2D51D82E029002F662A /* CityLoader.swift */,
 				E38EC2D61D82E029002F662A /* DirectionUnit.swift */,
 				E38EC2D71D82E029002F662A /* DistanceUnit.swift */,
-				E38EC2D81D82E029002F662A /* NSDateComponents+InitFromString.swift */,
+				E38EC2D81D82E029002F662A /* DateComponents+InitFromString.swift */,
 				E38EC2D91D82E029002F662A /* Result.swift */,
 				E38EC2DA1D82E029002F662A /* SpeedUnit.swift */,
 				E38EC2DB1D82E029002F662A /* TemperatureUnit.swift */,
@@ -173,14 +173,16 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0730;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Yaxin Cheng";
 				TargetAttributes = {
 					E38EC2BA1D82E01A002F662A = {
 						CreatedOnToolsVersion = 7.3;
+						LastSwiftMigration = 0800;
 					};
 					E38EC2C41D82E01A002F662A = {
 						CreatedOnToolsVersion = 7.3;
+						LastSwiftMigration = 0800;
 					};
 				};
 			};
@@ -230,7 +232,7 @@
 				E3F1CA8C1D8423A70017CDFF /* WeatherUnitProtocol.swift in Sources */,
 				E38EC2E01D82E029002F662A /* DirectionUnit.swift in Sources */,
 				E38EC2E11D82E029002F662A /* DistanceUnit.swift in Sources */,
-				E38EC2E21D82E029002F662A /* NSDateComponents+InitFromString.swift in Sources */,
+				E38EC2E21D82E029002F662A /* DateComponents+InitFromString.swift in Sources */,
 				E38EC2E51D82E029002F662A /* TemperatureUnit.swift in Sources */,
 				E38EC2E71D82E029002F662A /* WeatherSourceSQL.swift in Sources */,
 				E38EC2E81D82E029002F662A /* WeatherStation.swift in Sources */,
@@ -270,8 +272,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -319,8 +323,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -340,6 +346,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -351,6 +358,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -362,6 +370,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -369,6 +378,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -379,6 +389,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.guofeng.Ych.WeatherKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -389,6 +400,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.guofeng.Ych.WeatherKitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -399,6 +411,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.guofeng.Ych.WeatherKitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};

@@ -16,12 +16,12 @@ public enum SpeedUnit: WeatherUnitProtocol {
 	Convert distance unit in weather json or forecast json
 	- Parameter value: json needs to be converted
 	*/
-	func convert(value: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
+	func convert(_ value: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
 		let speedKey = "windSpeed"
-		guard self == kmph, let windSpeed = value[speedKey] as? Double else { return value }
-		let convertedSpeed = convert(windSpeed, from: mph, to: kmph)
+		guard self == SpeedUnit.kmph, let windSpeed = value[speedKey] as? Double else { return value }
+		let convertedSpeed = convert(windSpeed, from: .mph, to: .kmph)
 		var convertedJSON = value
-		convertedJSON[speedKey] = convertedSpeed
+		convertedJSON[speedKey] = convertedSpeed as AnyObject
 		return convertedJSON
 	}
 	

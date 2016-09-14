@@ -17,7 +17,7 @@ public enum DirectionUnit: WeatherUnitProtocol {
 	Convert distance unit in weather json or forecast json
 	- Parameter value: json needs to be converted
 	*/
-	func convert(value: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
+	func convert(_ value: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
 		let directionKey = "windDirection"
 		guard self == .direction, let windDirection = (value[directionKey] as? NSString)?.doubleValue else { return value }
 		
@@ -32,7 +32,7 @@ public enum DirectionUnit: WeatherUnitProtocol {
 		
 		let degree = convert(windDegree, from: DirectionUnit.degree, to: DirectionUnit.direction)
 		var convertedJSON = value
-		convertedJSON[directionKey] = degree
+		convertedJSON[directionKey] = degree as AnyObject
 		return convertedJSON
 	}
 	

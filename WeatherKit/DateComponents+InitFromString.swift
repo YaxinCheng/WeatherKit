@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension NSDateComponents {
+extension DateComponents {
 	/**
 	Constructs a new object with description time string.
 	
@@ -20,12 +20,12 @@ extension NSDateComponents {
 	- returns: 
 		An initialized object with .hour and .minute set, or nil if timeString is in a wrong format
 	*/
-	convenience init?(from timeString: String) {
+	init?(from timeString: String) {
 		self.init()
-		let timeComponents = timeString.characters.split(isSeparator: {$0 == " " || $0 == ":"}).map(String.init)
+		let timeComponents = timeString.characters.split(whereSeparator: {$0 == " " || $0 == ":"}).map(String.init)
 		guard timeComponents.count >= 2 else { return nil }
 		let elements = timeComponents.flatMap { Int($0) }
-		self.hour = elements[0] + (timeComponents[2].lowercaseString == "am" ? 0 : 12)
+		self.hour = elements[0] + (timeComponents[2].lowercased() == "am" ? 0 : 12)
 		self.minute = elements[1]
 	}
 }

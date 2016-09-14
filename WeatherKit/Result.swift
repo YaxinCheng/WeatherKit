@@ -9,14 +9,14 @@
 import Foundation
 
 public enum Result<ElementType> {
-	case Success(ElementType)
-	case Failure(ErrorType)
+	case success(ElementType)
+	case failure(Error)
 	
-	init(error: ErrorType) {
-		self = Result.Failure(error)
+	init(error: Error) {
+		self = Result.failure(error)
 	}
 	
 	init(value: ElementType) {
-		self = Result.Success(value)
+		self = Result.success(value)
 	}
 }

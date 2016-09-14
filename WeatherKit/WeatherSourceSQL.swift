@@ -40,44 +40,44 @@ enum WeatherSourceSQL: String {
 		A delegate method used to call at the end of the function.
 		Result can contain a generic type or an ErrorType
 	*/
-	func execute(information info: String, ignoreCache: Bool = false, completion: (Result<Dictionary<String, AnyObject>>) -> Void) {
+	func execute(information info: String, ignoreCache: Bool = false, completion: @escaping (Result<Dictionary<String, AnyObject>>) -> Void) {
 		let api = "https://query.yahooapis.com/v1/public/yql?q="
 		let endPoint = "&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys"
 		let sql = String(format: rawValue, info)
 		guard
-			let encodedString = (api + sql + endPoint).stringByAddingPercentEncodingWithAllowedCharacters(.URLFragmentAllowedCharacterSet()),
-			let requestURL = NSURL(string: encodedString)
+			let encodedString = (api + sql + endPoint).addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlFragmentAllowed),
+			let requestURL = URL(string: encodedString)
 		else {
-			completion(Result<Dictionary<String, AnyObject>>(error: WeatherSourceSQLError.URLError))
+			completion(Result<Dictionary<String, AnyObject>>(error: WeatherSourceSQLError.urlError))
 			return
 		}
-		let request = NSMutableURLRequest(URL: requestURL, cachePolicy: ignoreCache ? .ReloadIgnoringLocalCacheData : .UseProtocolCachePolicy, timeoutInterval: ignoreCache ? 0 : 10 * 60)
-		request.HTTPMethod = "GET"
-		NSURLSession.sharedSession().dataTaskWithRequest(request) { (data, response, error) in
+		let request = NSMutableURLRequest(url: requestURL, cachePolicy: ignoreCache ? .reloadIgnoringLocalCacheData : .useProtocolCachePolicy, timeoutInterval: ignoreCache ? 0 : 10 * 60)
+		request.httpMethod = "GET"
+		URLSession.shared.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
 			if error != nil {
 				let errorResult = Result<Dictionary<String, AnyObject>>(error: error!)
 				completion(errorResult)
 			} else {
 				do {
 					guard let responseData = data,
-						let JSON = try NSJSONSerialization.JSONObjectWithData(responseData, options: .MutableLeaves) as? Dictionary<String, AnyObject> where JSON["error"] == nil else {
-							let errorResult = Result<Dictionary<String, AnyObject>>(error: WeatherSourceSQLError.InternalError)
+						let JSON = try JSONSerialization.jsonObject(with: responseData, options: .mutableLeaves) as? Dictionary<String, AnyObject> , JSON["error"] == nil else {
+							let errorResult = Result<Dictionary<String, AnyObject>>(error: WeatherSourceSQLError.internalError)
 							completion(errorResult)
 							return
 					}
 					let result = Result<Dictionary<String, AnyObject>>(value: JSON)
 					completion(result)
 				} catch {
-					let errorResult = Result<Dictionary<String, AnyObject>>(error: WeatherSourceSQLError.JSONSerializeError)
+					let errorResult = Result<Dictionary<String, AnyObject>>(error: WeatherSourceSQLError.jsonSerializeError)
 					completion(errorResult)
 				}
 			}
-		}.resume()
+		}) .resume()
 	}
 }
 
-enum WeatherSourceSQLError: ErrorType {
-	case URLError
-	case InternalError
-	case JSONSerializeError
+enum WeatherSourceSQLError: Error {
+	case urlError
+	case internalError
+	case jsonSerializeError
 }
