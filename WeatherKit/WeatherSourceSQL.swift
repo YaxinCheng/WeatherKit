@@ -45,15 +45,14 @@ enum WeatherSourceSQL: String {
 		let endPoint = "&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys"
 		let sql = String(format: rawValue, info)
 		guard
-			let encodedString = (api + sql + endPoint).addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlFragmentAllowed),
+			let encodedString = (api + sql + endPoint).addingPercentEncoding(withAllowedCharacters: CharacterSet.urlFragmentAllowed),
 			let requestURL = URL(string: encodedString)
 		else {
 			completion(Result<Dictionary<String, AnyObject>>(error: WeatherSourceSQLError.urlError))
 			return
 		}
-		let request = NSMutableURLRequest(url: requestURL, cachePolicy: ignoreCache ? .reloadIgnoringLocalCacheData : .useProtocolCachePolicy, timeoutInterval: ignoreCache ? 0 : 10 * 60)
-		request.httpMethod = "GET"
-		URLSession.shared.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
+		let request = URLRequest(url: requestURL, cachePolicy: ignoreCache ? .reloadIgnoringLocalCacheData : .useProtocolCachePolicy, timeoutInterval: ignoreCache ? 0 : 10 * 60)
+		URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
 			if error != nil {
 				let errorResult = Result<Dictionary<String, AnyObject>>(error: error!)
 				completion(errorResult)
@@ -72,7 +71,7 @@ enum WeatherSourceSQL: String {
 					completion(errorResult)
 				}
 			}
-		}) .resume()
+		}).resume()
 	}
 }
 

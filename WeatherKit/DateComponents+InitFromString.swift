@@ -1,5 +1,5 @@
 //
-//  NSDateComponents+InitFromString.swift
+//  DateComponents+InitFromString.swift
 //  WeatherKit
 //
 //  Created by Yaxin Cheng on 2016-08-23.

@@ -95,7 +95,7 @@ public struct CityLoader {
 	- Parameter woeid: WOEID is a unique value used to locate a city
 	- Parameter complete:
 		A delegate method used to call at the end of the function.
-		Sunrise and sunset, two NSDateComponents, will be past to the complete
+		Sunrise and sunset, two DateComponents, will be past to the complete
 		
 		Once an error happened or no such city is found by the WOEID, two nils will be past
 	*/
