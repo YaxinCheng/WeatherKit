@@ -12,8 +12,8 @@ WeatherKit is simple kit for weather information in Swift
 - City searching and location parsing
 
 ## Requirements:
-- iOS 9.0+
-- Xcode 7.3+
+- iOS 10.0+
+- Xcode 8+
 
 ## Installation:
 WeatherKit can be installed through Cocoapods or manual import. 
@@ -23,13 +23,24 @@ $ gem install cocoapods
 ```
 After installation of cocoapods, create a file named `Podfile` at the root directory of the project:
 
+For swift2.3:
 ```ruby
 source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '9.0'
 use_frameworks!
 
 target '<Your Target Name>' do
-    pod 'WeatherKit'
+    pod 'WeatherKit', '~> 0.1.5-swift2.3'
+end
+```
+For swift3:
+```ruby
+source 'https://github.com/CocoaPods/Specs.git'
+platform :ios, '9.0'
+use_frameworks!
+
+target '<Your Target Name>' do
+    pod 'WeatherKit', '~> 0.1.5'
 end
 ```
 
