@@ -1,7 +1,7 @@
 ![WeatherKit: A simple concise kit for weather](https://cloud.githubusercontent.com/assets/13768613/18399821/5bfcc264-76a9-11e6-8dd1-f83e7ea3c34b.png)
-![Cocoapods](https://img.shields.io/badge/Cocoapods-1.1.0rc2-green.svg)
-![Swift2.3](https://img.shields.io/badge/Swift2.3-support-green.svg)
-![Swift3.x](https://img.shields.io/badge/Swift3.x-support-green.svg)
+![Cocoapods](https://img.shields.io/badge/cocoapods-1.0.1-green.svg)
+![Swift2.x](https://img.shields.io/badge/Swift2.x-support-green.svg)
+![Swift3.x](https://img.shields.io/badge/Swift3.x-ongoing-red.svg)
 <br>
 WeatherKit is simple kit for weather information in Swift
 <br>
@@ -12,8 +12,8 @@ WeatherKit is simple kit for weather information in Swift
 - City searching and location parsing
 
 ## Requirements:
-- iOS 9.0+
-- Xcode 7.3+
+- iOS 10.0+
+- Xcode 8+
 
 ## Installation:
 WeatherKit can be installed through Cocoapods or manual import. 
@@ -23,13 +23,24 @@ $ gem install cocoapods
 ```
 After installation of cocoapods, create a file named `Podfile` at the root directory of the project:
 
+For swift2.3:
 ```ruby
 source 'https://github.com/CocoaPods/Specs.git'
-platform :ios, '9.0'
+platform :ios, '10.0'
 use_frameworks!
 
 target '<Your Target Name>' do
-    pod 'WeatherKit'
+    pod 'WeatherKit', '~> 0.1.5-swift2.3'
+end
+```
+For swift3:
+```ruby
+source 'https://github.com/CocoaPods/Specs.git'
+platform :ios, '10.0'
+use_frameworks!
+
+target '<Your Target Name>' do
+    pod 'WeatherKit', '~> 0.1.5'
 end
 ```
 
@@ -193,3 +204,4 @@ cityJSON["timezone"] //String value about the timezone label of the city
 ## License
 
 WeatherKit is released under the MIT license. See LICENSE for details.
+
