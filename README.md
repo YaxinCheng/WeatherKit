@@ -1,5 +1,5 @@
 ![WeatherKit: A simple concise kit for weather](https://cloud.githubusercontent.com/assets/13768613/18399821/5bfcc264-76a9-11e6-8dd1-f83e7ea3c34b.png)
-![Cocoapods](https://img.shields.io/badge/cocoapods-1.0.1-green.svg)
+![Cocoapods](https://img.shields.io/badge/Cocoapods-1.1.0rc2-green.svg)
 ![Swift2.x](https://img.shields.io/badge/Swift2.x-support-green.svg)
 ![Swift3.x](https://img.shields.io/badge/Swift3.0-support-blue.svg)
 <br>
