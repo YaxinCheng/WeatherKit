@@ -269,14 +269,14 @@ public struct WeatherStation {
 	*/
 	private func formatWeatherJSON(_ json: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
 		var newJSON = Dictionary<String, AnyObject>()
-		newJSON["temperature"] = ((json["item"]?["condition"] as? Dictionary<String, AnyObject>)?["temp"] as? NSString)?.doubleValue as AnyObject?
+		newJSON["temperature"] = ((json["item"]?["condition"] as? Dictionary<String, AnyObject>)?["temp"] as? String)?.doubleValue as AnyObject?
 		newJSON["condition"] = (json["item"]?["condition"] as? Dictionary<String, AnyObject>)?["text"]
-		newJSON["conditionCode"] = ((json["item"]?["condition"] as? Dictionary<String, AnyObject>)?["code"] as? NSString)?.integerValue as AnyObject?
-		newJSON["windChill"] = (json["wind"]?["chill"] as? NSString)?.doubleValue as AnyObject?
-		newJSON["windSpeed"] = (json["wind"]?["speed"] as? NSString)?.doubleValue as AnyObject?
+		newJSON["conditionCode"] = ((json["item"]?["condition"] as? Dictionary<String, AnyObject>)?["code"] as? String)?.integerValue as AnyObject?
+		newJSON["windChill"] = (json["wind"]?["chill"] as? String)?.doubleValue as AnyObject?
+		newJSON["windSpeed"] = (json["wind"]?["speed"] as? String)?.doubleValue as AnyObject?
 		newJSON["windDirection"] = json["wind"]?["direction"] as AnyObject?
 		newJSON["humidity"] = json["atmosphere"]?["humidity"] as AnyObject?
-		newJSON["visibility"] = (json["atmosphere"]?["visibility"] as? NSString)?.doubleValue as AnyObject?
+		newJSON["visibility"] = (json["atmosphere"]?["visibility"] as? String)?.doubleValue as AnyObject?
 		newJSON["pressure"] = json["atmosphere"]?["pressure"] as AnyObject?
 		let trend = (json["atmosphere"]?["rising"] as? Int) == 0 ? "Falling" : "Rising"
 		newJSON["trend"] = trend as AnyObject
@@ -296,8 +296,8 @@ public struct WeatherStation {
 	*/
 	private func formatForecastJSON(_ json: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
 		var newJSON = json
-		newJSON["high"] = (json["high"] as? NSString)?.doubleValue as AnyObject?
-		newJSON["low"] = (json["low"] as? NSString)?.doubleValue as AnyObject?
+		newJSON["high"] = (json["high"] as? String)?.doubleValue as AnyObject?
+		newJSON["low"] = (json["low"] as? String)?.doubleValue as AnyObject?
 		return newJSON
 	}
 	

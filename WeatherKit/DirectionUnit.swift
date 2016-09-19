@@ -19,7 +19,7 @@ public enum DirectionUnit: WeatherUnitProtocol {
 	*/
 	func convert(_ value: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
 		let directionKey = "windDirection"
-		guard self == .direction, let windDirection = (value[directionKey] as? NSString)?.doubleValue else { return value }
+		guard self == .direction, let windDirection = (value[directionKey] as? String)?.doubleValue else { return value }
 		
 		let windDegree: Double
 		if windDirection < 0 {
