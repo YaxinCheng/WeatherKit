@@ -68,8 +68,9 @@ import WeatherKit
 WeatherStation is the interface which retrieves weather/forecast information<br>
 The contructor accepts 4 units parameters with default values, which will be used to convert weather/forecast information<br>
 
+#### Constructor:
 ``` swift
-public init(temperatureUnit tunit: TemperatureUnit = .celsius, distanceUnit: DistanceUnit = .mi, directionUnit: DirectionUnit = .direction, speedUnit: SpeedUnit = .mph)
+public init(temperatureUnit: TemperatureUnit = .celsius, distanceUnit: DistanceUnit = .mi, directionUnit: DirectionUnit = .direction, speedUnit: SpeedUnit = .mph)
 ```
 
 #### Load weather/forecasts for a location
@@ -165,6 +166,10 @@ The constructor accepts no parameters, which makes CityLoader easier to be insta
 #### Load city information:
 With default values for province and country, so the two parameters can be skipped<br>
 But searching with those two parameters can increase the accuracy of search
+#### Constructor:
+``` swift
+public init() { ... }
+```
 ``` swift
 let loader = CityLoader()
 loader.loadCity(city: "cityName", province: "provinceName", country: "countryName") { result in
