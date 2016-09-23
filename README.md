@@ -59,7 +59,7 @@ Then, run the following command:
 ```bash
 $ pod install
 ```
-## Usage:
+## User Manual:
 Kit imports
 ``` swift
 import WeatherKit
