@@ -16,12 +16,12 @@ public enum DistanceUnit: WeatherUnitProtocol {
 	Convert distance unit in weather json or forecast json
 	- Parameter value: json needs to be converted
 	*/
-	func convert(_ value: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
+	func convert(_ value: Dictionary<String, Any>) -> Dictionary<String, Any> {
 		let distanceKey = "visibility"
 		guard self == .km, let visibility = value[distanceKey] as? Double else { return value }
 		var convertedJSON = value
 		let convertedVisibility = convert(visibility, from: DistanceUnit.mi, to: DistanceUnit.km)
-		convertedJSON[distanceKey] = convertedVisibility as AnyObject
+		convertedJSON[distanceKey] = convertedVisibility
 		return convertedJSON
 	}
 	

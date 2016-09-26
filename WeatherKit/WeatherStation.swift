@@ -91,12 +91,12 @@ public struct WeatherStation {
 		A delegate method used to call at the end of the function.
 		Result can contain a generic type or an ErrorType
 	*/
-	public func weather(city: String, province: String = "", country: String = "", complete: @escaping (Result<Dictionary<String, AnyObject>>) -> Void) {
+	public func weather(city: String, province: String = "", country: String = "", complete: @escaping (Result<Dictionary<String, Any>>) -> Void) {
 		queue.async {
 			let cityLoader = CityLoader()
 			cityLoader.loadCity(city: city, province: province, country: country) {
 				guard let woeid = $0.first?["woeid"] as? String else {
-					let errorResult = Result<Dictionary<String, AnyObject>>(error: YahooWeatherError.failedFindingCity)
+					let errorResult = Result<Dictionary<String, Any>>(error: YahooWeatherError.failedFindingCity)
 					complete(errorResult)
 					return
 				}
@@ -114,11 +114,11 @@ public struct WeatherStation {
 		A delegate method used to call at the end of the function.
 		Result can contain a generic type or an ErrorType
 	*/
-	public func weather(location: CLLocation, complete: @escaping (Result<Dictionary<String, AnyObject>>) -> Void) {
+	public func weather(location: CLLocation, complete: @escaping (Result<Dictionary<String, Any>>) -> Void) {
 		let cityLoader = CityLoader()
 		cityLoader.locationParse(location: location) {
 			guard let city = $0 else {
-				let errorResult = Result<Dictionary<String, AnyObject>>(error: YahooWeatherError.failedFindingCity)
+				let errorResult = Result<Dictionary<String, Any>>(error: YahooWeatherError.failedFindingCity)
 				complete(errorResult)
 				return
 			}
@@ -140,12 +140,12 @@ public struct WeatherStation {
 		A delegate method used to call at the end of the function.
 		Result can contain a generic type or an ErrorType
 	*/
-	public func forecast(city: String, province: String, country: String, complete: @escaping (Result<[Dictionary<String, AnyObject>]>) -> Void) {
+	public func forecast(city: String, province: String, country: String, complete: @escaping (Result<[Dictionary<String, Any>]>) -> Void) {
 		queue.async {
 			let cityLoader = CityLoader()
 			cityLoader.loadCity(city: city, province: province, country: country) {
 				guard let woeid = $0.first?["woeid"] as? String else {
-					let errorResult = Result<[Dictionary<String, AnyObject>]>(error: YahooWeatherError.failedFindingCity)
+					let errorResult = Result<[Dictionary<String, Any>]>(error: YahooWeatherError.failedFindingCity)
 					complete(errorResult)
 					return
 				}
@@ -163,11 +163,11 @@ public struct WeatherStation {
 		A delegate method used to call at the end of the function.
 		Result can contain a generic type or an ErrorType
 	*/
-	public func forecast(location: CLLocation, complete: @escaping ((Result<[Dictionary<String, AnyObject>]>) -> Void)) {
+	public func forecast(location: CLLocation, complete: @escaping ((Result<[Dictionary<String, Any>]>) -> Void)) {
 		let cityLoader = CityLoader()
 		cityLoader.locationParse(location: location) {
 			guard let city = $0 else {
-				let errorResult = Result<[Dictionary<String, AnyObject>]>(error: YahooWeatherError.failedFindingCity)
+				let errorResult = Result<[Dictionary<String, Any>]>(error: YahooWeatherError.failedFindingCity)
 				complete(errorResult)
 				return
 			}
@@ -186,14 +186,14 @@ public struct WeatherStation {
 		A delegate method used to call at the end of the function.
 		Result can contain a generic type or an ErrorType
 	*/
-	private func loadWeatherData(woeid: String, complete: @escaping (Result<Dictionary<String, AnyObject>>) -> Void) {
+	private func loadWeatherData(woeid: String, complete: @escaping (Result<Dictionary<String, Any>>) -> Void) {
 		let baseSQL:WeatherSourceSQL = .weather
-		typealias JSON = Dictionary<String, AnyObject>
+		typealias JSON = Dictionary<String, Any>
 		queue.async {
 			baseSQL.execute(information: woeid) { (result) in
 				switch result {
 				case .success(let weatherJSON):
-					guard let unwrapped = (weatherJSON["query"]?["results"] as? JSON)?["channel"] as? JSON else {
+					guard let unwrapped = ((weatherJSON["query"] as? JSON)?["results"] as? JSON)?["channel"] as? JSON else {
 						let error = Result<JSON>(error: YahooWeatherError.loadFailed)
 						DispatchQueue.main.async {
 							complete(error)
@@ -228,14 +228,14 @@ public struct WeatherStation {
 	A delegate method used to call at the end of the function.
 	Result can contain a generic type or an ErrorType
 	*/
-	private func loadForecasts(woeid: String, complete: @escaping (Result<[Dictionary<String, AnyObject>]>) -> Void) {
+	private func loadForecasts(woeid: String, complete: @escaping (Result<[Dictionary<String, Any>]>) -> Void) {
 		let baseSQL:WeatherSourceSQL = .forecast
-		typealias JSON = Dictionary<String, AnyObject>
+		typealias JSON = Dictionary<String, Any>
 		queue.async {
 			baseSQL.execute(information: woeid) { (result) in
 				switch result {
 				case .success(let yahooJSON):
-					guard let unwrapped = (yahooJSON["query"]?["results"] as? JSON)?["channel"] as? [JSON] else {
+					guard let unwrapped = ((yahooJSON["query"] as? JSON)?["results"] as? JSON)?["channel"] as? [JSON] else {
 						let error = Result<[JSON]>(error: YahooWeatherError.loadFailed)
 						DispatchQueue.main.async {
 							complete(error)
@@ -243,7 +243,7 @@ public struct WeatherStation {
 						return
 					}
 					let forecasts = unwrapped
-						.flatMap { $0["item"]?["forecast"] as? Dictionary<String, AnyObject> }
+						.flatMap { ($0["item"] as? JSON)?["forecast"] as? JSON }
 						.map { self.formatForecastJSON($0) }
 						.map { self.temperatureUnit.convert($0) }
 						.map { self.distanceUnit.convert($0) }
@@ -267,21 +267,22 @@ public struct WeatherStation {
 	- returns:
 		A newly packed json
 	*/
-	private func formatWeatherJSON(_ json: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
-		var newJSON = Dictionary<String, AnyObject>()
-		newJSON["temperature"] = ((json["item"]?["condition"] as? Dictionary<String, AnyObject>)?["temp"] as? String)?.doubleValue as AnyObject?
-		newJSON["condition"] = (json["item"]?["condition"] as? Dictionary<String, AnyObject>)?["text"]
-		newJSON["conditionCode"] = ((json["item"]?["condition"] as? Dictionary<String, AnyObject>)?["code"] as? String)?.integerValue as AnyObject?
-		newJSON["windChill"] = (json["wind"]?["chill"] as? String)?.doubleValue as AnyObject?
-		newJSON["windSpeed"] = (json["wind"]?["speed"] as? String)?.doubleValue as AnyObject?
-		newJSON["windDirection"] = json["wind"]?["direction"] as AnyObject?
-		newJSON["humidity"] = json["atmosphere"]?["humidity"] as AnyObject?
-		newJSON["visibility"] = (json["atmosphere"]?["visibility"] as? String)?.doubleValue as AnyObject?
-		newJSON["pressure"] = json["atmosphere"]?["pressure"] as AnyObject?
-		let trend = (json["atmosphere"]?["rising"] as? Int) == 0 ? "Falling" : "Rising"
-		newJSON["trend"] = trend as AnyObject
-		newJSON["sunrise"] = DateComponents(from: (json["astronomy"]?["sunrise"] as? String) ?? "") as AnyObject
-		newJSON["sunset"] = DateComponents(from: (json["astronomy"]?["sunset"] as? String) ?? "") as AnyObject
+	private func formatWeatherJSON(_ json: Dictionary<String, Any>) -> Dictionary<String, Any> {
+		typealias JSON = Dictionary<String, Any>
+		var newJSON = JSON()
+		newJSON["temperature"] = (((json["item"] as? JSON)?["condition"] as? JSON)?["temp"] as? String)?.doubleValue
+		newJSON["condition"] = ((json["item"] as? JSON)?["condition"] as? JSON)?["text"]
+		newJSON["conditionCode"] = (((json["item"] as? JSON)?["condition"] as? JSON)?["code"] as? String)?.integerValue
+		newJSON["windChill"] = ((json["wind"] as? JSON)?["chill"] as? String)?.doubleValue
+		newJSON["windSpeed"] = ((json["wind"] as? JSON)?["speed"] as? String)?.doubleValue
+		newJSON["windDirection"] = (json["wind"] as? JSON)?["direction"]
+		newJSON["humidity"] = (json["atmosphere"] as? JSON)?["humidity"]
+		newJSON["visibility"] = ((json["atmosphere"] as? JSON)?["visibility"] as? String)?.doubleValue
+		newJSON["pressure"] = (json["atmosphere"] as? JSON)?["pressure"]
+		let trend = ((json["atmosphere"] as? JSON)?["rising"] as? Int) == 0 ? "Falling" : "Rising"
+		newJSON["trend"] = trend
+		newJSON["sunrise"] = DateComponents(from: ((json["astronomy"] as? JSON)?["sunrise"] as? String) ?? "")
+		newJSON["sunset"] = DateComponents(from: ((json["astronomy"] as? JSON)?["sunset"] as? String) ?? "")
 		
 		return newJSON
 	}
@@ -294,7 +295,7 @@ public struct WeatherStation {
 	- returns:
 	A newly packed json
 	*/
-	private func formatForecastJSON(_ json: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
+	private func formatForecastJSON(_ json: Dictionary<String, Any>) -> Dictionary<String, Any> {
 		var newJSON = json
 		newJSON["high"] = (json["high"] as? String)?.doubleValue as AnyObject?
 		newJSON["low"] = (json["low"] as? String)?.doubleValue as AnyObject?

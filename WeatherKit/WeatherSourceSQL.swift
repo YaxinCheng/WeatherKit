@@ -40,7 +40,7 @@ enum WeatherSourceSQL: String {
 		A delegate method used to call at the end of the function.
 		Result can contain a generic type or an ErrorType
 	*/
-	func execute(information info: String, ignoreCache: Bool = false, completion: @escaping (Result<Dictionary<String, AnyObject>>) -> Void) {
+	func execute(information info: String, ignoreCache: Bool = false, completion: @escaping (Result<Dictionary<String, Any>>) -> Void) {
 		let api = "https://query.yahooapis.com/v1/public/yql?q="
 		let endPoint = "&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys"
 		let sql = String(format: rawValue, info)
@@ -48,26 +48,26 @@ enum WeatherSourceSQL: String {
 			let encodedString = (api + sql + endPoint).addingPercentEncoding(withAllowedCharacters: CharacterSet.urlFragmentAllowed),
 			let requestURL = URL(string: encodedString)
 		else {
-			completion(Result<Dictionary<String, AnyObject>>(error: WeatherSourceSQLError.urlError))
+			completion(Result<Dictionary<String, Any>>(error: WeatherSourceSQLError.urlError))
 			return
 		}
 		let request = URLRequest(url: requestURL, cachePolicy: ignoreCache ? .reloadIgnoringLocalCacheData : .useProtocolCachePolicy, timeoutInterval: ignoreCache ? 0 : 10 * 60)
 		URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
 			if error != nil {
-				let errorResult = Result<Dictionary<String, AnyObject>>(error: error!)
+				let errorResult = Result<Dictionary<String, Any>>(error: error!)
 				completion(errorResult)
 			} else {
 				do {
 					guard let responseData = data,
 						let JSON = try JSONSerialization.jsonObject(with: responseData, options: .mutableLeaves) as? Dictionary<String, AnyObject> , JSON["error"] == nil else {
-							let errorResult = Result<Dictionary<String, AnyObject>>(error: WeatherSourceSQLError.internalError)
+							let errorResult = Result<Dictionary<String, Any>>(error: WeatherSourceSQLError.internalError)
 							completion(errorResult)
 							return
 					}
-					let result = Result<Dictionary<String, AnyObject>>(value: JSON)
+					let result = Result<Dictionary<String, Any>>(value: JSON)
 					completion(result)
 				} catch {
-					let errorResult = Result<Dictionary<String, AnyObject>>(error: WeatherSourceSQLError.jsonSerializeError)
+					let errorResult = Result<Dictionary<String, Any>>(error: WeatherSourceSQLError.jsonSerializeError)
 					completion(errorResult)
 				}
 			}

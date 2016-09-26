@@ -28,17 +28,17 @@ public struct CityLoader {
 		A delegate method used to call at the end of the function.
 		An array of JSON will be past to the complete
 	*/
-	public func loadCity(city: String, province: String = "", country: String = "", complete: @escaping ([Dictionary<String, AnyObject>]) -> Void) {
-		typealias JSON = Dictionary<String, AnyObject>
+	public func loadCity(city: String, province: String = "", country: String = "", complete: @escaping ([Dictionary<String, Any>]) -> Void) {
+		typealias JSON = Dictionary<String, Any>
 		queue.async {
 			let baseSQL: WeatherSourceSQL = .cityFromName
 			baseSQL.execute(information: city + ", " + province + ", " + country) { result in
 				switch result {
 				case .success(let citiesJSON):
 					let unwrapped: [JSON]
-					if let places = (citiesJSON["query"]?["results"] as? JSON)?["place"] as? [JSON] {
+					if let places = ((citiesJSON["query"] as? JSON)?["results"] as? JSON)?["place"] as? [JSON] {
 						unwrapped = places
-					} else if let place = (citiesJSON["query"]?["results"] as? JSON)?["place"] as? JSON {
+					} else if let place = ((citiesJSON["query"] as? JSON)?["results"] as? JSON)?["place"] as? JSON {
 						unwrapped = [place]
 					} else {
 						DispatchQueue.main.async {
@@ -67,14 +67,14 @@ public struct CityLoader {
 		
 		Once an error happened or no city is found from this woeid, a nil will be past to the complete
 	*/
-	public func loadCity(woeid: String, complete: @escaping (Dictionary<String, AnyObject>?) -> Void) {
-		typealias JSON = Dictionary<String, AnyObject>
+	public func loadCity(woeid: String, complete: @escaping (Dictionary<String, Any>?) -> Void) {
+		typealias JSON = Dictionary<String, Any>
 		queue.async {
 			let baseSQL: WeatherSourceSQL = .cityFromWoeid
 			baseSQL.execute(information: woeid) { (result) in
 				switch result {
 				case .success(let json):
-					guard let unwrapped = (json["query"]?["results"] as? JSON)?["place"] as? JSON else {
+					guard let unwrapped = ((json["query"] as? JSON)?["results"] as? JSON)?["place"] as? JSON else {
 						DispatchQueue.main.async {
 							complete(nil)
 						}
@@ -100,13 +100,14 @@ public struct CityLoader {
 		Once an error happened or no such city is found by the WOEID, two nils will be past
 	*/
 	public func dayNight(woeid: String, complete: @escaping (_ sunrise: DateComponents?, _ sunset: DateComponents?) -> Void) {
+		typealias JSON = Dictionary<String, Any>
 		queue.async {
 			let baseSQL: WeatherSourceSQL = .daytime
 			baseSQL.execute(information: woeid) { (result) in
 				switch result {
 				case .success(let daytimeJSON):
 					guard
-						let unwrapped = (daytimeJSON["query"]?["results"] as? Dictionary<String, AnyObject>)?["channel"]?["astronomy"] as? Dictionary<String, AnyObject>,
+						let unwrapped = (((daytimeJSON["query"] as? JSON)?["results"] as? JSON)?["channel"] as? JSON)?["astronomy"] as? JSON,
 						let sunriseString = unwrapped["sunrise"] as? String,
 						let sunrise = DateComponents(from: sunriseString),
 						let sunsetString = unwrapped["sunset"] as? String,
@@ -135,7 +136,7 @@ public struct CityLoader {
 	A delegate method used to call at the end of the function.
 	Result can contain a generic type or an ErrorType
 	*/
-	public func locationParse(location: CLLocation, complete: @escaping (Dictionary<String, AnyObject>?) -> Void) {
+	public func locationParse(location: CLLocation, complete: @escaping (Dictionary<String, Any>?) -> Void) {
 		let geoCoder = CLGeocoder()
 		queue.async {
 			geoCoder.reverseGeocodeLocation(location) { (placeMarks, error) in
