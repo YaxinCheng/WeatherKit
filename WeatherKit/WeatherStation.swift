@@ -270,19 +270,23 @@ public struct WeatherStation {
 	private func formatWeatherJSON(_ json: Dictionary<String, Any>) -> Dictionary<String, Any> {
 		typealias JSON = Dictionary<String, Any>
 		var newJSON = JSON()
-		newJSON["temperature"] = (((json["item"] as? JSON)?["condition"] as? JSON)?["temp"] as? String)?.doubleValue
-		newJSON["condition"] = ((json["item"] as? JSON)?["condition"] as? JSON)?["text"]
-		newJSON["conditionCode"] = (((json["item"] as? JSON)?["condition"] as? JSON)?["code"] as? String)?.integerValue
-		newJSON["windChill"] = ((json["wind"] as? JSON)?["chill"] as? String)?.doubleValue
-		newJSON["windSpeed"] = ((json["wind"] as? JSON)?["speed"] as? String)?.doubleValue
-		newJSON["windDirection"] = (json["wind"] as? JSON)?["direction"]
-		newJSON["humidity"] = (json["atmosphere"] as? JSON)?["humidity"]
-		newJSON["visibility"] = ((json["atmosphere"] as? JSON)?["visibility"] as? String)?.doubleValue
-		newJSON["pressure"] = (json["atmosphere"] as? JSON)?["pressure"]
-		let trend = ((json["atmosphere"] as? JSON)?["rising"] as? Int) == 0 ? "Falling" : "Rising"
+		let condition = (json["item"] as? JSON)?["condition"] as? JSON
+		newJSON["temperature"] = (condition?["temp"] as? String)?.doubleValue
+		newJSON["condition"] = condition?["text"]
+		newJSON["conditionCode"] = (condition?["code"] as? String)?.integerValue
+		let wind = json["wind"] as? JSON
+		newJSON["windChill"] = (wind?["chill"] as? String)?.doubleValue
+		newJSON["windSpeed"] = (wind?["speed"] as? String)?.doubleValue
+		newJSON["windDirection"] = wind?["direction"]
+		let atmosphere = json["atmosphere"] as? JSON
+		newJSON["humidity"] = atmosphere?["humidity"]
+		newJSON["visibility"] = (atmosphere?["visibility"] as? String)?.doubleValue
+		newJSON["pressure"] = atmosphere?["pressure"]
+		let trend = (atmosphere?["rising"] as? Int) == 0 ? "Falling" : "Rising"
 		newJSON["trend"] = trend
-		newJSON["sunrise"] = DateComponents(from: ((json["astronomy"] as? JSON)?["sunrise"] as? String) ?? "")
-		newJSON["sunset"] = DateComponents(from: ((json["astronomy"] as? JSON)?["sunset"] as? String) ?? "")
+		let astronomy = json["astronomy"] as? JSON
+		newJSON["sunrise"] = DateComponents(from: (astronomy?["sunrise"] as? String) ?? "")
+		newJSON["sunset"] = DateComponents(from: (astronomy?["sunset"] as? String) ?? "")
 		
 		return newJSON
 	}
