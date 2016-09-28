@@ -91,7 +91,7 @@ public struct WeatherStation {
 		A delegate method used to call at the end of the function.
 		Result can contain a generic type or an ErrorType
 	*/
-	public func weather(city: String, province: String = "", country: String = "", complete: @escaping (Result<Dictionary<String, Any>>) -> Void) {
+	public func weather(city: String, province: String = "", country: String = "", ignoreCache: Bool = false, complete: @escaping (Result<Dictionary<String, Any>>) -> Void) {
 		queue.async {
 			let cityLoader = CityLoader()
 			cityLoader.loadCity(city: city, province: province, country: country) {
@@ -114,16 +114,16 @@ public struct WeatherStation {
 		A delegate method used to call at the end of the function.
 		Result can contain a generic type or an ErrorType
 	*/
-	public func weather(location: CLLocation, complete: @escaping (Result<Dictionary<String, Any>>) -> Void) {
+	public func weather(location: CLLocation, ignoreCache: Bool = false, complete: @escaping (Result<Dictionary<String, Any>>) -> Void) {
 		let cityLoader = CityLoader()
 		cityLoader.locationParse(location: location) {
-			guard let city = $0 else {
+			guard let city = $0, let woeid = city["woeid"] as? String else {
 				let errorResult = Result<Dictionary<String, Any>>(error: YahooWeatherError.failedFindingCity)
 				complete(errorResult)
 				return
 			}
 			self.queue.async {
-				self.loadWeatherData(woeid: city["woeid"] as! String, complete: complete)
+				self.loadWeatherData(woeid: woeid, ignoreCache: ignoreCache, complete: complete)
 			}
 		}
 	}
@@ -140,7 +140,7 @@ public struct WeatherStation {
 		A delegate method used to call at the end of the function.
 		Result can contain a generic type or an ErrorType
 	*/
-	public func forecast(city: String, province: String, country: String, complete: @escaping (Result<[Dictionary<String, Any>]>) -> Void) {
+	public func forecast(city: String, province: String, country: String, ignoreCache: Bool = false, complete: @escaping (Result<[Dictionary<String, Any>]>) -> Void) {
 		queue.async {
 			let cityLoader = CityLoader()
 			cityLoader.loadCity(city: city, province: province, country: country) {
@@ -149,7 +149,7 @@ public struct WeatherStation {
 					complete(errorResult)
 					return
 				}
-				self.loadForecasts(woeid: woeid, complete: complete)
+				self.loadForecasts(woeid: woeid, ignoreCache: ignoreCache, complete: complete)
 			}
 		}
 	}
@@ -163,16 +163,16 @@ public struct WeatherStation {
 		A delegate method used to call at the end of the function.
 		Result can contain a generic type or an ErrorType
 	*/
-	public func forecast(location: CLLocation, complete: @escaping ((Result<[Dictionary<String, Any>]>) -> Void)) {
+	public func forecast(location: CLLocation, ignoreCache: Bool = false, complete: @escaping ((Result<[Dictionary<String, Any>]>) -> Void)) {
 		let cityLoader = CityLoader()
 		cityLoader.locationParse(location: location) {
-			guard let city = $0 else {
+			guard let city = $0, let woeid = city["woeid"] as? String else {
 				let errorResult = Result<[Dictionary<String, Any>]>(error: YahooWeatherError.failedFindingCity)
 				complete(errorResult)
 				return
 			}
 			self.queue.async {
-				self.loadForecasts(woeid: city["woeid"] as! String, complete: complete)
+				self.loadForecasts(woeid: woeid, ignoreCache: ignoreCache, complete: complete)
 			}
 		}
 	}
@@ -186,11 +186,11 @@ public struct WeatherStation {
 		A delegate method used to call at the end of the function.
 		Result can contain a generic type or an ErrorType
 	*/
-	private func loadWeatherData(woeid: String, complete: @escaping (Result<Dictionary<String, Any>>) -> Void) {
+	private func loadWeatherData(woeid: String, ignoreCache: Bool = false, complete: @escaping (Result<Dictionary<String, Any>>) -> Void) {
 		let baseSQL:WeatherSourceSQL = .weather
 		typealias JSON = Dictionary<String, Any>
 		queue.async {
-			baseSQL.execute(information: woeid) { (result) in
+			baseSQL.execute(information: woeid, ignoreCache: ignoreCache) { (result) in
 				switch result {
 				case .success(let weatherJSON):
 					guard let unwrapped = ((weatherJSON["query"] as? JSON)?["results"] as? JSON)?["channel"] as? JSON else {
@@ -228,11 +228,11 @@ public struct WeatherStation {
 	A delegate method used to call at the end of the function.
 	Result can contain a generic type or an ErrorType
 	*/
-	private func loadForecasts(woeid: String, complete: @escaping (Result<[Dictionary<String, Any>]>) -> Void) {
+	private func loadForecasts(woeid: String, ignoreCache: Bool = false, complete: @escaping (Result<[Dictionary<String, Any>]>) -> Void) {
 		let baseSQL:WeatherSourceSQL = .forecast
 		typealias JSON = Dictionary<String, Any>
 		queue.async {
-			baseSQL.execute(information: woeid) { (result) in
+			baseSQL.execute(information: woeid, ignoreCache: ignoreCache) { (result) in
 				switch result {
 				case .success(let yahooJSON):
 					guard let unwrapped = ((yahooJSON["query"] as? JSON)?["results"] as? JSON)?["channel"] as? [JSON] else {
@@ -301,8 +301,8 @@ public struct WeatherStation {
 	*/
 	private func formatForecastJSON(_ json: Dictionary<String, Any>) -> Dictionary<String, Any> {
 		var newJSON = json
-		newJSON["high"] = (json["high"] as? String)?.doubleValue as AnyObject?
-		newJSON["low"] = (json["low"] as? String)?.doubleValue as AnyObject?
+		newJSON["high"] = (json["high"] as? String)?.doubleValue
+		newJSON["low"] = (json["low"] as? String)?.doubleValue
 		return newJSON
 	}
 	

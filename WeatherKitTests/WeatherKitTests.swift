@@ -13,7 +13,7 @@ import CoreLocation
 class WeatherKitTests: XCTestCase {
 	var weatherSource: WeatherStation!
 	var halifaxLocation: CLLocation!
-	var halifaxJSON: Dictionary<String, AnyObject>!
+	var halifaxJSON: Dictionary<String, Any>!
 	var mockWeatherFahJSON: Dictionary<String, Double>!
 	var mockWeatherCelJSON: Dictionary<String, Double>!
 	var mockForecastFahJSON: Dictionary<String, Double>!
@@ -23,14 +23,14 @@ class WeatherKitTests: XCTestCase {
 		super.setUp()
 		// Put setup code here. This method is called before the invocation of each test method in the class.
 		weatherSource = WeatherStation()
-		var halifaxJSON = Dictionary<String, AnyObject>()
-		halifaxJSON["name"] = "Halifax" as AnyObject?
-		halifaxJSON["admin1"] = "Nova Scotia" as AnyObject?
-		halifaxJSON["country"] = "Canada" as AnyObject?
-		halifaxJSON["woeid"] = "4177" as AnyObject?
+		var halifaxJSON = Dictionary<String, Any>()
+		halifaxJSON["name"] = "Halifax"
+		halifaxJSON["admin1"] = "Nova Scotia"
+		halifaxJSON["country"] = "Canada"
+		halifaxJSON["woeid"] = "4177"
 		let centroid = ["latitude": "44.642078", "longitude": "-63.620571"]
-		halifaxJSON["centroid"] = centroid as AnyObject?
-		halifaxJSON["timezone"] = "America/Halifax" as AnyObject?
+		halifaxJSON["centroid"] = centroid
+		halifaxJSON["timezone"] = "America/Halifax"
 		self.halifaxJSON = halifaxJSON
 		halifaxLocation = CLLocation(latitude: 44.642078, longitude: -63.620571)
 		mockWeatherFahJSON = ["temperature": 73.0, "windChill": 77.0]
@@ -183,18 +183,18 @@ class WeatherKitTests: XCTestCase {
 	
 	func testTemperatureUnitConversion() {
 		weatherSource.temperatureUnit = .fahrenheit
-		let sameWeatherJSON = weatherSource.temperatureUnit.convert(mockWeatherFahJSON as Dictionary<String, AnyObject>)
+		let sameWeatherJSON = weatherSource.temperatureUnit.convert(mockWeatherFahJSON as Dictionary<String, Any>)
 		for (key, value) in sameWeatherJSON {
 			assert(value is Double)
 			assert((value as! Double) == mockWeatherFahJSON[key])
 		}
-		let sameForecastsJSON = weatherSource.temperatureUnit.convert(mockForecastFahJSON as Dictionary<String, AnyObject>)
+		let sameForecastsJSON = weatherSource.temperatureUnit.convert(mockForecastFahJSON as Dictionary<String, Any>)
 		for (key, value) in sameForecastsJSON {
 			assert(value is Double)
 			assert((value as! Double) == mockForecastFahJSON[key])
 		}
 		weatherSource.temperatureUnit = .celsius
-		let weatherCelJSON = weatherSource.temperatureUnit.convert(mockWeatherFahJSON as Dictionary<String, AnyObject>)
+		let weatherCelJSON = weatherSource.temperatureUnit.convert(mockWeatherFahJSON as Dictionary<String, Any>)
 		guard let temperature = weatherCelJSON["temperature"] as? Double,
 			let windChill = weatherCelJSON["windChill"] as? Double else {
 				XCTFail()
@@ -202,7 +202,7 @@ class WeatherKitTests: XCTestCase {
 		}
 		assert(abs(temperature - 22.7777777777778) <= 0.00001)
 		assert(abs(windChill - 25) <= 0.0001)
-		let forecastsCelJSON = weatherSource.temperatureUnit.convert(mockForecastFahJSON as Dictionary<String, AnyObject>)
+		let forecastsCelJSON = weatherSource.temperatureUnit.convert(mockForecastFahJSON as Dictionary<String, Any>)
 		guard let low = forecastsCelJSON["low"] as? Double,
 			let high = forecastsCelJSON["high"] as? Double else {
 				XCTFail()
@@ -214,11 +214,11 @@ class WeatherKitTests: XCTestCase {
 	
 	func testDistanceUnitConversion() {
 		let mockWeatherMiJSON = ["visibility": 10.0]
-		let sameJSON = weatherSource.distanceUnit.convert(mockWeatherMiJSON as Dictionary<String, AnyObject>)
+		let sameJSON = weatherSource.distanceUnit.convert(mockWeatherMiJSON as Dictionary<String, Any>)
 		assert(sameJSON["visibility"] is Double)
 		assert((sameJSON["visibility"] as! Double) == mockWeatherMiJSON["visibility"])
 		weatherSource.distanceUnit = .km
-		let kmJSON = weatherSource.distanceUnit.convert(mockWeatherMiJSON as Dictionary<String, AnyObject>)
+		let kmJSON = weatherSource.distanceUnit.convert(mockWeatherMiJSON as Dictionary<String, Any>)
 		guard let visibilityInKM = kmJSON["visibility"] as? Double else { XCTFail(); return }
 		assert(visibilityInKM - 16.1 <= 0.001)
 	}
@@ -226,11 +226,11 @@ class WeatherKitTests: XCTestCase {
 	func testDirectionUnitConversion() {
 		weatherSource.directionUnit = .degree
 		let mockDirectionJSON = ["windDirection": "371"]
-		let sameJSON = weatherSource.directionUnit.convert(mockDirectionJSON as Dictionary<String, AnyObject>)
+		let sameJSON = weatherSource.directionUnit.convert(mockDirectionJSON as Dictionary<String, Any>)
 		assert(sameJSON["windDirection"] is String)
 		assert(mockDirectionJSON["windDirection"] == sameJSON["windDirection"] as? String)
 		weatherSource.directionUnit = .direction
-		let directionJSON = weatherSource.directionUnit.convert(mockDirectionJSON as Dictionary<String, AnyObject>)
+		let directionJSON = weatherSource.directionUnit.convert(mockDirectionJSON as Dictionary<String, Any>)
 		assert(directionJSON["windDirection"] is String)
 		assert(directionJSON["windDirection"] as? String != "DEGREE ERROR")
 	}
@@ -238,11 +238,11 @@ class WeatherKitTests: XCTestCase {
 	func testSpeedUnitConversion() {
 		let originalSpeed: Double = 10
 		let mockSpeedJSON = ["windSpeed": originalSpeed]
-		let sameJSON = weatherSource.speedUnit.convert(mockSpeedJSON as Dictionary<String, AnyObject>)
+		let sameJSON = weatherSource.speedUnit.convert(mockSpeedJSON as Dictionary<String, Any>)
 		assert(sameJSON["windSpeed"] is Double)
 		assert(sameJSON["windSpeed"] as? Double == mockSpeedJSON["windSpeed"])
 		weatherSource.speedUnit = .kmph
-		let speedJSON = weatherSource.speedUnit.convert(mockSpeedJSON as Dictionary<String, AnyObject>)
+		let speedJSON = weatherSource.speedUnit.convert(mockSpeedJSON as Dictionary<String, Any>)
 		assert(speedJSON["windSpeed"] is Double)
 		assert((speedJSON["windSpeed"] as! Double) - 16.1 <= 0.01)
 	}

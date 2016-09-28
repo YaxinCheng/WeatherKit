@@ -59,7 +59,7 @@ enum WeatherSourceSQL: String {
 			} else {
 				do {
 					guard let responseData = data,
-						let JSON = try JSONSerialization.jsonObject(with: responseData, options: .mutableLeaves) as? Dictionary<String, AnyObject> , JSON["error"] == nil else {
+						let JSON = try JSONSerialization.jsonObject(with: responseData, options: .mutableLeaves) as? Dictionary<String, Any> , JSON["error"] == nil else {
 							let errorResult = Result<Dictionary<String, Any>>(error: WeatherSourceSQLError.internalError)
 							completion(errorResult)
 							return
