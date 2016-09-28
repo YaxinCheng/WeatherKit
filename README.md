@@ -30,7 +30,7 @@ platform :ios, '10.0'
 use_frameworks!
 
 target '<Your Target Name>' do
-    pod 'WeatherKit', '~> 0.1.6'
+    pod 'WeatherKit', '~> 0.1.7'
 end
 ```
 For swift2.3:
