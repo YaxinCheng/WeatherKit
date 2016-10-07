@@ -184,6 +184,7 @@ loader.loadCity(woeid: "SomeWOEID") { result in
      // result is an optional typed JSON (Dictionary<String, AnyObject>?)
      // If no city matches the woeid, or any error happens, then the result == nil
 }
+```
 
 #### Load sunrise& sunset information:
 City loader can also check sunrise& sunset time for a city with the woeid, the result will be given back as a tuple of two optional NSDateComponents <br>
